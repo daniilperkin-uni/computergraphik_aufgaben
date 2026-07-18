@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakePythonSetting">
+    <option name="pythonIntegrationState" value="YES" />
+  </component>
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$/Aufgabenblatt09/code">
+    <contentRoot DIR="$PROJECT_DIR$/aufgaben_blatt_01/aufgaben_blatt_01/aufgabe_3/code/cmake-build-debug" />
+  </component>
+</project>
