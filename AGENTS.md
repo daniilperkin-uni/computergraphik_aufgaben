@@ -81,3 +81,9 @@ For example, to run the `ImageViewer` from `Aufgabenblatt06`:
 *   **Camera:** Implemented camera control with View and Projection matrix calculations (`glm::lookAt`, `glm::perspective`) and input handling (Keyboard/Joystick).
 *   **Shaders:** Integrated shaders for instanced geometry and texture mapping for sprites.
 
+### Aufgabenblatt 09: Scene Shading
+*   **Scene Graph:** Implemented transformation hierarchies to compute local and global world matrices for scene objects.
+*   **Vertex Data:** Mapped non-interleaved geometry data (Positions, Normals, UVs, Tangents) to specific shader locations using Vertex Buffers.
+*   **Phong Lighting:** Implemented a multi-light source Phong reflection model calculating diffuse, specular, and distance attenuation components.
+*   **Normal Mapping:** Transformed normals using Tangent-Space (TBN) matrices to add fine geometric details from textures.
+

@@ -33,6 +33,7 @@ The assignments are organized into `AufgabenblattXX` directories, where `XX` rep
 -   **`Aufgabenblatt06/`**: Advanced topics covering rasterization, scene graphs, lighting, and interactive rendering using OpenGL-related libraries.
 -   **`Aufgabenblatt07/`**: Image processing on CPU, featuring convolution filters (Gaussian, Laplacian) and boundary handling.
 -   **`Aufgabenblatt08/`**: Efficient rendering of large scenes using Instanced Rendering and Billboards (Imposters), utilizing Direct State Access (DSA).
+-   **`Aufgabenblatt09/`**: Scene Shading, covering scene graphs, vertex data management, Phong lighting, and Normal Mapping.
 
 Each `AufgabenblattXX` folder contains a dedicated `README.md` with a more detailed description of the specific tasks and context for that assignment.
 
