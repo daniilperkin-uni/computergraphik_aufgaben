@@ -9,7 +9,7 @@
  * @brief Create a scene with a plane and a bunch of colored spheres.
  * @return The scene as list of scene objects.
  */
-std::vector<std::shared_ptr<SceneObject>> create_scene()
+inline std::vector<std::shared_ptr<SceneObject>> create_scene()
 {
     std::vector<std::shared_ptr<SceneObject>> objects;
 

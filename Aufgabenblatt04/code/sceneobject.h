@@ -78,6 +78,7 @@ public:
 
     PhongCoefficients getPhongCoefficients(const Vec3d& p_hit) const override;
 
+protected:
     Vec3d _point;   //< Point on the plane.
     Vec3d _normal;  //< Normal of the plane.
 };
@@ -101,6 +102,7 @@ public:
 
     PhongCoefficients getPhongCoefficients(const Vec3d& p_hit) const override;
 
+protected:
     double _radius; //< Radius of the sphere.
     Vec3d _center;  //< Center of the sphere.
 };

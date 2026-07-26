@@ -30,8 +30,8 @@ bool Plane::intersect(const Ray &ray, double &t) const
 {
     double denom = this->_normal.dot(ray.dir);
 
-    // check if parallel
-    if (!Vec3d::approxEq(denom, 0.))
+    // check if parallel (avoid dividing by a near-zero denominator)
+    if (std::abs(denom) > 1e-6)
     {
         const Vec3d origin2point = this->_point - ray.origin;
 
@@ -64,17 +64,9 @@ Vec3d Plane::getSurfaceColor(const Vec3d &p_hit) const
  * @param ray Reference to the ray to be checked for intersection with objects.
  * @param t Reference to the intersection distance along the ray.
  */
-/**
- * @brief Sphere::intersect
- * @param ray Reference to the ray to be checked for intersection with objects.
- * @param t Reference to the intersection distance along the ray.
- */
 bool Sphere::intersect(const Ray &ray, double &t) const
 {
-    ///////////
-    // TODO
     // Implement a ray-sphere intersection test.
-    //
     // cf., lecture slides raytracing 37ff
 
     // Vektor vom Kugelmittelpunkt zum Strahlursprung
@@ -109,9 +101,6 @@ bool Sphere::intersect(const Ray &ray, double &t) const
 
     // Beide Schnittpunkte liegen hinter dem Strahlursprung
     return false;
-
-    // END TODO
-    ///////////
 }
 
 /**

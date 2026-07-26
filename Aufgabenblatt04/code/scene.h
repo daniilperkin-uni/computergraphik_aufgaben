@@ -11,7 +11,7 @@
  * @brief Create a scene with a plane and a bunch of colored spheres.
  * @return The scene as list of scene objects.
  */
-std::vector<std::shared_ptr<SceneObject>> create_scene_objects()
+inline std::vector<std::shared_ptr<SceneObject>> create_scene_objects()
 {
     std::vector<std::shared_ptr<SceneObject>> objects;
 
@@ -286,7 +286,7 @@ std::vector<std::shared_ptr<SceneObject>> create_scene_objects()
  * @brief Create a bunch of point lights.
  * @return A vector of point lights.
  */
-std::vector<Pointlight> create_scene_lights() {
+inline std::vector<Pointlight> create_scene_lights() {
     std::vector<Pointlight> lights;
     lights.reserve(16);
 

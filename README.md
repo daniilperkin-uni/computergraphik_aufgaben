@@ -37,49 +37,69 @@ The assignments are organized into `AufgabenblattXX` directories, where `XX` rep
 
 Each `AufgabenblattXX` folder contains a dedicated `README.md` with a more detailed description of the specific tasks and context for that assignment.
 
+## Prerequisites
+
+*   **C++ compiler** supporting **C++14** (e.g., g++ >= 5, clang++, or MSVC). A C++17-capable compiler is recommended for the later OpenGL assignments.
+*   **CMake >= 3.5**.
+*   **OpenGL 4.4+** (4.5+ recommended) plus **GLFW**, **GLAD**, **GLM**, and **Dear ImGui** for the real-time assignments (`Aufgabenblatt06`-`Aufgabenblatt09`). `Aufgabenblatt09` additionally uses **glowl** and **tinygltf**.
+*   The early ray-tracing assignments (`Aufgabenblatt03`, `Aufgabenblatt04`) have **no external dependencies** beyond a C++14 compiler and CMake.
+
 ## Building and Running Assignments
 
-To build and run the assignments, you will need a C++ compiler (like g++ or MSVC) and CMake installed.
+There are two supported ways to build.
 
-**General Build Steps:**
+### Option A - Build everything from the repository root
 
-1.  **Open a Terminal/Command Prompt:** Navigate to the root directory of this repository.
-2.  **Create a Build Directory:** It's good practice to create a separate directory for build artifacts.
-    ```bash
-    mkdir build
-    cd build
-    ```
-3.  **Configure CMake:**
-    To configure the entire project at once (this will generate build files for all sub-projects):
-    ```bash
-    cmake ..
-    ```
-    Alternatively, to configure a specific assignment (e.g., `Aufgabenblatt06`):
-    ```bash
-    # Navigate into the assignment's build directory (or create it)
-    mkdir ../Aufgabenblatt06/00_student_setup/code/build
-    cd ../Aufgabenblatt06/00_student_setup/code/build
-    # Then run cmake, pointing to the source directory of that assignment
-    cmake ../../..
-    ```
-    *(Adjust the `cmake` command's path (`..` or `../../..`) based on your current directory relative to the `CMakeLists.txt` you wish to build.)*
+A root `CMakeLists.txt` is provided that wires up every assignment sheet that ships its own `CMakeLists.txt` via `add_subdirectory()` (guarded by `EXISTS` checks, so missing sheets are skipped). From the repository root:
 
-4.  **Build the Project:** Compile the source code.
-    ```bash
-    cmake --build .
-    ```
-    This command compiles all targets defined in the configured `CMakeLists.txt` files.
-
-**Running Executables:**
-
-After a successful build, the executable files will be located in the build directory, often within a `Debug` or `Release` subfolder, depending on your build configuration.
-
-Example of running an executable (e.g., the `ImageViewer` from `Aufgabenblatt06`):
 ```bash
-# On Linux/macOS
+cmake -B build
+cmake --build build
+```
+
+> Note: `Aufgabenblatt03` and `Aufgabenblatt04` build targets are named `Raytracer03` and `Raytracer04` (they originally both produced a `Raytracer` target). `Aufgabenblatt06` and `Aufgabenblatt07` both define an `ImageViewer` target, so only `Aufgabenblatt06` is included in the root build - build `Aufgabenblatt07` per-sheet.
+
+### Option B - Build a single sheet (per-sheet)
+
+Each assignment sheet has its own `CMakeLists.txt` and can be built independently. This is the recommended approach when you only work on one sheet or when a sheet needs OpenGL dependencies that are not available globally.
+
+For the ray tracer sheets (no OpenGL deps), e.g. `Aufgabenblatt03`:
+
+```bash
+cd Aufgabenblatt03/code
+cmake -B build
+cmake --build build
+```
+
+For an OpenGL sheet, e.g. `Aufgabenblatt06`:
+
+```bash
+cd Aufgabenblatt06/00_student_setup/code
+cmake -B build
+cmake --build build
+```
+
+**Running Executables**
+
+After a successful build, the executable files will be located in the build directory (often within a `Debug` or `Release` subfolder, depending on the generator).
+
+Run the Blatt 03 ray tracer:
+
+```bash
+# Linux/macOS
+./Aufgabenblatt03/code/build/Raytracer03
+
+# Windows
+.\Aufgabenblatt03\code\build\Raytracer03.exe
+```
+
+Run the `ImageViewer` from `Aufgabenblatt06`:
+
+```bash
+# Linux/macOS
 ./Aufgabenblatt06/00_student_setup/code/build/ImageViewer
 
-# On Windows
+# Windows
 .\Aufgabenblatt06\00_student_setup\code\build\ImageViewer.exe
 ```
 *(The exact path and executable name will vary depending on the specific assignment and your operating system.)*
@@ -88,7 +108,7 @@ Example of running an executable (e.g., the `ImageViewer` from `Aufgabenblatt06`
 
 *   **Language Standard:** Modern C++ features are used, adhering to C++14 and C++17 standards.
 *   **Memory Management:** `std::shared_ptr` is commonly employed for robust object management within scene graphs and object hierarchies, promoting safer memory handling.
-*   **Code Structure:** Code is logically organized into modules and uses namespaces (e.g., `cg`) to maintain clarity and prevent naming conflicts.
+*   **Code Structure:** Code is logically organized into modules. Note that the codebase does **not** use a `namespace cg` (or any project namespace) despite earlier documentation claims - symbols live in the global namespace.
 *   **Documentation:** Code includes comments (some in German) explaining complex logic and `TODO` markers indicating areas for student implementation.
 
 ---

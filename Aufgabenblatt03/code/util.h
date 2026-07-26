@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-static int state = {42};
-
 /**
  * @brief Simple Ray class. A ray is defined with an origin and a direction.
  */
@@ -78,7 +76,7 @@ static void comparePPM(const std::string referenceFileName, const std::string te
 
         for (size_t i = 0; i < framebuffer.size(); ++i)
         {
-            Vec3d color = Vec3d::clamp(0., 255., framebuffer.at(i));
+            Vec3d color = Vec3d::clamp(0., 1., framebuffer.at(i));
             if ((pixel_data.at(i*3+0) != static_cast<char>(255 * color[0])) +
                 (pixel_data.at(i*3+1) != static_cast<char>(255 * color[1])) +
                 (pixel_data.at(i*3+2) != static_cast<char>(255 * color[2])))
@@ -126,7 +124,7 @@ static void saveAsPPM(const std::string name, const Vec3i viewport,
 
     for (size_t i = 0; i < framebuffer.size(); ++i)
     {
-        Vec3d color = Vec3d::clamp(0., 255., framebuffer.at(i));
+        Vec3d color = Vec3d::clamp(0., 1., framebuffer.at(i));
 
         const char r = static_cast<char>(255 * color[0]);
         const char g = static_cast<char>(255 * color[1]);

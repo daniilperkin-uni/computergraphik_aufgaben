@@ -11,9 +11,6 @@
 const static bool TEST_RAY_GENERATION = false;
 const static bool TEST_SPHERE_INTERSECT = true;
 
-// Random number generation seed
-const static int SEED = 42;
-
 const static int WIDTH = 600;
 const static int HEIGHT = 600;
 
@@ -132,7 +129,6 @@ void render(const Vec3i viewport, const std::vector<std::shared_ptr<SceneObject>
             Vec3d rayDirection(x, y, z);
             rayDirection.normalize();
 
-            // HIER IST DER FIX:
             Ray ray;
             ray.origin = cameraPos;
             ray.dir = rayDirection;

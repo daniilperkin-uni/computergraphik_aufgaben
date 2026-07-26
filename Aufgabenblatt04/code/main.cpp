@@ -11,8 +11,6 @@
 #include "util.h"
 #include "vec3.h"
 
-const static int SEED = 42;
-
 const static int WIDTH = 600;
 const static int HEIGHT = 600;
 const static int MAX_DEPTH = 5;
@@ -21,6 +19,10 @@ const static int MAX_DEPTH = 5;
 // TODO 2:
 // Compute Phong lighting
 //
+// Computes the per-light diffuse and specular contributions only.
+// The ambient term (k_a) is NOT included here: it is added exactly once in
+// computeDirectLighting() to avoid the ambient double-counting that occurs when
+// every light re-adds k_a.
 Vec3d computePhongLighting(
     Vec3d const& view_direction,            //< direction from surface point to camera origin
     Vec3d const& surface_normal,            //< normal vector at surface point
@@ -30,15 +32,18 @@ Vec3d computePhongLighting(
     Vec3d const& light_color,               //< color of the light source
     double light_intensity)                 //< intensity of the light source
 {
-        //Berechnet das Phong-Beleuchtungsmodell.
-        const Vec3d ambient = std::get<0>(phong_coeff) * light_color;
-        const double diff_dot = std::max(0.0, surface_normal.dot(light_direction));
-        const Vec3d diffuse = std::get<1>(phong_coeff) * diff_dot * light_color;
-        const Vec3d reflection_direction = 2 * surface_normal.dot(light_direction) * surface_normal - light_direction;
-        const double spec_dot = std::max(0.0, reflection_direction.dot(view_direction));
-        const Vec3d specular = std::get<2>(phong_coeff) * std::pow(spec_dot, std::get<3>(phong_coeff)) * light_color;
-        return (ambient + diffuse + specular) * light_intensity;
-        // END TODO 2
+    // Diffuse reflection (Lambert).
+    const double diff_dot = std::max(0.0, surface_normal.dot(light_direction));
+    const Vec3d diffuse = std::get<1>(phong_coeff) * diff_dot * light_color;
+
+    // Specular reflection (Phong).
+    const Vec3d reflection_direction = 2 * surface_normal.dot(light_direction) * surface_normal - light_direction;
+    const double spec_dot = std::max(0.0, reflection_direction.dot(view_direction));
+    const Vec3d specular = std::get<2>(phong_coeff) * std::pow(spec_dot, std::get<3>(phong_coeff)) * light_color;
+
+    // Ambient is intentionally omitted here (added once in computeDirectLighting).
+    return (diffuse + specular) * light_intensity;
+    // END TODO 2
 }
 
 /**
@@ -72,12 +77,99 @@ bool trace(const Ray& ray,
 }
 
 /**
- * @brief Cast a ray into the scene. If the ray hits at least one object,
- *        the color of the object closest to the camera is returned.
+ * @brief Check whether a surface point is in shadow with respect to a light.
+ *
+ * Casts a shadow ray from the (slightly offset) surface point towards the light
+ * and tests it against every scene object. The point is considered shadowed if
+ * an intersection is found closer than the light distance.
+ *
+ * @param p_hit The surface point being shaded.
+ * @param surface_normal The unit normal at p_hit (used to offset the ray origin).
+ * @param light The point light whose visibility is being tested.
+ * @param objects All scene objects that may occlude the light.
+ * @return true if the light is occluded, false otherwise.
+ */
+bool inShadow(const Vec3d& p_hit, const Vec3d& surface_normal,
+    const Pointlight& light,
+    const std::vector<std::shared_ptr<SceneObject>>& objects)
+{
+    const Vec3d to_light = light.getPosition() - p_hit;
+    const double light_distance = to_light.length();
+    const Vec3d light_direction = to_light.normalize();
+
+    Ray shadow_ray;
+    shadow_ray.origin = p_hit + surface_normal * 1e-4;  // offset to avoid self-shadowing
+    shadow_ray.dir = light_direction;
+
+    std::shared_ptr<SceneObject> shadow_hit_object = nullptr;
+    double t_shadow = light_distance;
+
+    return trace(shadow_ray, objects, t_shadow, shadow_hit_object) &&
+           t_shadow < light_distance;
+}
+
+/**
+ * @brief Compute the direct (local) Phong lighting at a surface point.
+ *
+ * Sums the diffuse and specular contributions of every light that is visible
+ * from p_hit (i.e. not occluded, as determined by inShadow()). The ambient term
+ * k_a is added exactly ONCE, outside the per-light loop, instead of being
+ * re-added for every light - which previously caused ambient double-counting
+ * and an over-bright image.
+ *
+ * @param ray The incoming ray (used to derive the view direction toward the camera).
+ * @param p_hit The shaded surface point.
+ * @param surface_normal The unit normal at p_hit.
+ * @param coeffs Phong coefficients (k_a, k_d, k_s, n) of the hit surface.
+ * @param lights All point lights in the scene.
+ * @param objects All scene objects (used for shadow tests).
+ * @return The accumulated direct-lighting color at p_hit (ambient added once).
+ */
+Vec3d computeDirectLighting(const Ray& ray, const Vec3d& p_hit, const Vec3d& surface_normal,
+    const PhongCoefficients& coeffs, const std::vector<Pointlight>& lights,
+    const std::vector<std::shared_ptr<SceneObject>>& objects)
+{
+    // Ambient term: added ONCE, independent of any point light (standard Phong).
+    // k_a encodes the surface's ambient reflectance (equal to the surface color
+    // for both Plane and Sphere in this scene).
+    Vec3d result = std::get<0>(coeffs);
+
+    const Vec3d view_direction = (ray.origin - p_hit).normalize();
+
+    for (const auto& light : lights)
+    {
+        if (inShadow(p_hit, surface_normal, light, objects))
+            continue;
+
+        const Vec3d to_light = light.getPosition() - p_hit;
+        const double light_distance = to_light.length();
+        const Vec3d light_direction = to_light.normalize();
+
+        result += computePhongLighting(view_direction, surface_normal, light_direction,
+            coeffs, light.getColor(),
+            light.getIntensity() / (light_distance * light_distance));
+    }
+
+    return result;
+}
+
+/**
+ * @brief Cast a ray into the scene and shade the closest hit, if any.
+ *
+ * Pipeline:
+ *   1. Stop recursion at MAX_DEPTH (return background color).
+ *   2. Trace the ray against all objects; if nothing is hit, return the
+ *      dark-blue background color.
+ *   3. Compute direct Phong lighting (ambient added once, plus diffuse and
+ *      specular from every non-occluded light) via computeDirectLighting().
+ *   4. If the surface is reflective (k_s != 0), spawn a reflection ray and
+ *      add its (recursively shaded) contribution weighted by k_s.
+ *
  * @param ray The ray that's being cast.
  * @param objects All scene objects.
- * @return The color of a hit object that is closest to the camera.
- *         Return dark blue if no object was hit.
+ * @param lights All point lights in the scene.
+ * @return The shaded color at the closest hit, or dark blue if nothing was hit
+ *         or MAX_DEPTH was exceeded.
  */
 Vec3d castRay(const Ray& ray, const std::vector<std::shared_ptr<SceneObject>>& objects,
     const std::vector<Pointlight>& lights)
@@ -96,50 +188,23 @@ Vec3d castRay(const Ray& ray, const std::vector<std::shared_ptr<SceneObject>>& o
     double t = std::numeric_limits<double>::max();
 
     // Trace the ray. If an object gets hit, calculate the hit point and
-    // retrieve the surface color 'hitColor' from the 'hitObject' object that was hit
+    // retrieve the surface properties from the 'hitObject' that was hit.
     if (trace(ray, objects, t, hitObject))
     {
-        hitColor = Vec3d();
-
         // Intersection point with the hit object
         const Vec3d p_hit = ray.origin + ray.dir * t;
 
         const Vec3d surface_normal = hitObject->getSurfaceNormal(p_hit);
         const PhongCoefficients phong_coeffs = hitObject->getPhongCoefficients(p_hit);
-        const Vec3d surface_color = hitObject->getSurfaceColor(p_hit);
 
-        // TODO 3: Implementiert die lokale Beleuchtung und Schatten.
-        for (const auto& light : lights)
-        {
-            const Vec3d light_direction = (light.getPosition() - p_hit).normalize();
-            const double light_distance = (light.getPosition() - p_hit).length();
+        // Local (direct) lighting: ambient once + diffuse/specular per visible light.
+        hitColor = computeDirectLighting(ray, p_hit, surface_normal, phong_coeffs, lights, objects);
 
-            Ray shadow_ray;
-            shadow_ray.origin = p_hit + surface_normal * 1e-4;
-            shadow_ray.dir = light_direction;
-
-            std::shared_ptr<SceneObject> shadow_hit_object = nullptr;
-            double t_shadow = light_distance;
-
-            if (!trace(shadow_ray, objects, t_shadow, shadow_hit_object) || t_shadow >= light_distance)
-            {
-                const Vec3d view_direction = (ray.origin - p_hit).normalize();
-                hitColor += computePhongLighting(view_direction, surface_normal, light_direction,
-                                                 phong_coeffs, light.getColor(),
-                                                 light.getIntensity() / (light_distance * light_distance));
-            }
-            else
-            {
-                hitColor += std::get<0>(phong_coeffs) * surface_color *
-                            (light.getIntensity() / (light_distance * light_distance));
-            }
-        }
-        // END TODO 3
-
-        // TODO 4: Implementiert die spiegelnde Reflexion.
+        // Specular reflection: spawn a reflection ray and recurse.
         if (std::get<2>(phong_coeffs).length() > 0)
         {
-            const Vec3d reflection_direction = (2 * surface_normal.dot(-ray.dir) * surface_normal + ray.dir).normalize();
+            const Vec3d reflection_direction =
+                (2 * surface_normal.dot(-ray.dir) * surface_normal + ray.dir).normalize();
 
             Ray reflection_ray;
             reflection_ray.origin = p_hit + surface_normal * 1e-4;
@@ -148,7 +213,6 @@ Vec3d castRay(const Ray& ray, const std::vector<std::shared_ptr<SceneObject>>& o
 
             hitColor += std::get<2>(phong_coeffs) * castRay(reflection_ray, objects, lights);
         }
-        // END TODO 4
     }
 
     return hitColor;
