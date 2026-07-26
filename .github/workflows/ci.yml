@@ -15,8 +15,10 @@ jobs:
         sheet: [Aufgabenblatt03, Aufgabenblatt04, Aufgabenblatt09]
     steps:
       - uses: actions/checkout@v4
-      - name: Install OpenGL dependencies
-        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+      - name: Install OpenGL and X11 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
       - name: Configure CMake
         run: cmake -S ${{ matrix.sheet }}/code -B ${{ matrix.sheet }}/code/build
       - name: Build
