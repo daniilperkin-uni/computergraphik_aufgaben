@@ -93,7 +93,7 @@ bool inShadow(const Vec3d& p_hit, const Vec3d& surface_normal,
     const Pointlight& light,
     const std::vector<std::shared_ptr<SceneObject>>& objects)
 {
-    const Vec3d to_light = light.getPosition() - p_hit;
+    Vec3d to_light = light.getPosition() - p_hit;
     const double light_distance = to_light.length();
     const Vec3d light_direction = to_light.normalize();
 
@@ -141,7 +141,7 @@ Vec3d computeDirectLighting(const Ray& ray, const Vec3d& p_hit, const Vec3d& sur
         if (inShadow(p_hit, surface_normal, light, objects))
             continue;
 
-        const Vec3d to_light = light.getPosition() - p_hit;
+        Vec3d to_light = light.getPosition() - p_hit;
         const double light_distance = to_light.length();
         const Vec3d light_direction = to_light.normalize();
 
