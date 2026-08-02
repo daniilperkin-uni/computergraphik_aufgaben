@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sheet: [Aufgabenblatt03, Aufgabenblatt04, Aufgabenblatt09]
+        sheet: [Aufgabenblatt02, Aufgabenblatt03, Aufgabenblatt04, Aufgabenblatt09]
     steps:
       - uses: actions/checkout@v4
       - name: Install OpenGL and X11 dependencies
