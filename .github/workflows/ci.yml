@@ -11,8 +11,17 @@ jobs:
     name: Build (CMake)
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        sheet: [Aufgabenblatt02, Aufgabenblatt03, Aufgabenblatt04, Aufgabenblatt09]
+        include:
+          - sheet: Aufgabenblatt02
+            source_dir: Aufgabenblatt02/aufgaben_blatt_02_/code
+          - sheet: Aufgabenblatt03
+            source_dir: Aufgabenblatt03/code
+          - sheet: Aufgabenblatt04
+            source_dir: Aufgabenblatt04/code
+          - sheet: Aufgabenblatt09
+            source_dir: Aufgabenblatt09/code
     steps:
       - uses: actions/checkout@v4
       - name: Install OpenGL and X11 dependencies
@@ -20,6 +29,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
       - name: Configure CMake
-        run: cmake -S ${{ matrix.sheet }}/code -B ${{ matrix.sheet }}/code/build
+        run: cmake -S ${{ matrix.source_dir }} -B ${{ matrix.source_dir }}/build
       - name: Build
-        run: cmake --build ${{ matrix.sheet }}/code/build
+        run: cmake --build ${{ matrix.source_dir }}/build
