@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(ImageViewer)
 
@@ -23,7 +23,7 @@ file(GLOB_RECURSE scene_header_files "${CMAKE_CURRENT_SOURCE_DIR}/scene/*.h")
 file(GLOB_RECURSE scene_source_files "${CMAKE_CURRENT_SOURCE_DIR}/scene/*.cpp")
 file(GLOB image_header_files "${CMAKE_CURRENT_SOURCE_DIR}/image/*.h")
 file(GLOB image_source_files "${CMAKE_CURRENT_SOURCE_DIR}/image/*.cpp")
-file(GLOB shader_files "{CMAKE_CURRENT_SOURCE_DIR}/shader/*")
+file(GLOB shader_files "${CMAKE_CURRENT_SOURCE_DIR}/shader/*")
 
 # Target
 add_executable(${PROJECT_NAME}
@@ -34,18 +34,13 @@ add_executable(${PROJECT_NAME}
   ${image_header_files}
   ${image_source_files}
   ${shader_files})
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad glm imgui glowl)
 
 if(OpenMP_CXX_FOUND)
-  # Standard Target (versucht es sauber)
   target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
-
-  # "Hammer"-Methode für MinGW: Erzwinge den Linker-Flag und die Bibliothek
-  target_link_libraries(${PROJECT_NAME} PRIVATE "-fopenmp")
-  target_link_libraries(${PROJECT_NAME} PRIVATE gomp)
 endif()
 
 if (${DOWNGRADE_GL})
@@ -68,9 +63,5 @@ endif()
 # Install
 include(GNUInstallDirs)
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH "" FORCE)
-endif()
-
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/shaders" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/shader" DESTINATION .)

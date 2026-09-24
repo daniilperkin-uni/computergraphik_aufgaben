@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 project(ColorSpaces)
 
-# Set CXX standard to 11 for compatibility
-set(CMAKE_CXX_STANDARD 11)
+# Set CXX standard to 17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Fügen Sie hier alle Ihre Quelldateien (.cpp) hinzu
