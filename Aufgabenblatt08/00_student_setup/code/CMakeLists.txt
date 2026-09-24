@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 if (POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
 endif ()
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 project(Geometrie)
 
