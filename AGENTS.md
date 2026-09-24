@@ -9,14 +9,14 @@ The project evolves through various topics:
 *   **Real-time Rasterization:** Development of a rasterization pipeline including scene management, camera controls, lighting models, and geometric primitives using OpenGL-related libraries.
 
 **Key Technologies and Libraries:**
-*   **Language:** C++ (primarily C++14 and C++17 standards)
+*   **Language:** C++17 (every sheet's CMake sets C++17)
 *   **Build System:** CMake
-*   **Graphics Libraries (later assignments):**
+*   **Graphics Libraries (later assignments):** GLFW 3.4, GLM 1.0.1, imgui and tinygltf are fetched via CMake `FetchContent`; only OpenGL/X11 dev headers must be installed.
     *   **GLFW:** For creating windows and handling OpenGL contexts.
     *   **GLAD:** An OpenGL loader.
     *   **GLM:** OpenGL Mathematics (header-only library for C++ with GLSL-like types and functions).
     *   **Dear ImGui:** A bloat-free graphical user interface library for C++.
-    *   **glowl:** open-source lightweight C++ wrapper library for OpenGL objects (shader programs, textures, buffers); vendored in sheets 06 and 07.
+    *   **glowl:** open-source lightweight C++ wrapper library for OpenGL objects (shader programs, textures, buffers); vendored in sheets 06 and 07. lodepng (08) is vendored under `libs/`.
 
 ## Building and Running the Project
 
@@ -47,9 +47,9 @@ For example, to run the `ImageViewer` from `Aufgabenblatt06`:
 
 ## Development Conventions
 
-*   **Language Standard:** The project utilizes modern C++ features, primarily adhering to C++14 and C++17 standards.
+*   **Language Standard:** All sheets build as C++17.
 *   **Memory Management:** Extensive use of `std::shared_ptr` is observed for robust object ownership and memory management, especially within scene graphs and object hierarchies.
-*   **Code Structure:** Code is organized into logical directories (e.g., `scene`, `image`, `shader`). The codebase does **not** use a `namespace cg` (or any project namespace) - symbols live in the global namespace, despite earlier documentation claims to the contrary.
+*   **Code Structure:** Code is organized into logical directories (e.g., `scene`, `image`, `shader`). The image/rasterizer code of sheets 02, 06 and 07 lives in `namespace cg`; the ray tracers (03/04) and sheets 08/09 use the global namespace.
 *   **Comments and Documentation:** Code includes comments, often in German, providing explanations and `TODO` markers for assignment tasks.
 *   **Assignment-Driven Development:** The codebase is designed around individual assignments (`AufgabenblattXX`), where students are expected to implement specific functionalities within the provided framework.
 
@@ -75,13 +75,13 @@ cd Aufgabenblatt04/code
 cmake -B build
 cmake --build build
 
-# OpenGL sheets (need OpenGL 4.4+, GLFW, GLAD, GLM, ImGui)
+# OpenGL sheets (need OpenGL 4.4+ and OpenGL/X11 dev headers; other deps are fetched/vendored)
 cd Aufgabenblatt06/00_student_setup/code
 cmake -B build
 cmake --build build
 ```
 
-Target names: `Raytracer03` (Blatt 03), `Raytracer04` (Blatt 04), `ColorSpaces` (Blatt 02), `ImageViewer` (Blatt 06 & 07 - build only one in a shared tree), `Geometrie` (Blatt 08), `SceneShading` (Blatt 09).
+Target names: `Raytracer03` (Blatt 03), `Raytracer04` (Blatt 04), `ColorSpaces` (Blatt 02), `aufgabe_1`..`aufgabe_4` (Blatt 01), `ImageViewer` (Blatt 06), `ImageViewer07` (Blatt 07), `Geometrie` (Blatt 08), `SceneShading` (Blatt 09).
 
 ## Known Issues
 
@@ -93,8 +93,8 @@ The following issues were identified and fixed in this refactor of the ray-traci
 *   **Encapsulation restored (Blatt 04):** `Plane::_point`, `Plane::_normal`, `Sphere::_radius` and `Sphere::_center` were changed from `public` back to `protected`, matching Blatt 03.
 *   **`castRay` refactor (Blatt 04):** the 73-line `castRay` was split into `inShadow()`, `computeDirectLighting()` and a thin `castRay()` orchestrator. The ambient term (`k_a`) is now added **once** outside the light loop instead of being re-added per light (which previously caused ambient double-counting and an over-bright image). This is an intentional behavior change beyond the clamp fix.
 *   **Plane parallel test (Blatt 03):** `Vec3d::approxEq(denom, 0.)` was replaced with a domain threshold `std::abs(denom) > 1e-6` to avoid dividing by a near-zero denominator. Blatt 04 already used a threshold (`denom < -1.e-6`) and was left unchanged to preserve its one-sided intersection behavior.
-*   **CMake modernization:** both `CMakeLists.txt` files now use explicit source listings (no `file(GLOB)`), `if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")` / `if(MSVC)` (no `${VAR}` dereference), and `CXX_STANDARD 14` consistently. Blatt 03/04 targets renamed to `Raytracer03`/`Raytracer04` so both can coexist in a root build.
-*   **Docs:** the false `namespace cg` claim was removed from `README.md` and `AGENTS.md`. A root `CMakeLists.txt` was added so the "configure all from root" instructions actually work.
+*   **CMake modernization:** both `CMakeLists.txt` files now use explicit source listings (no `file(GLOB)`), `if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")` / `if(MSVC)` (no `${VAR}` dereference), and `CXX_STANDARD 17` consistently. Blatt 03/04 targets renamed to `Raytracer03`/`Raytracer04` so both can coexist in a root build.
+*   **Docs:** a root `CMakeLists.txt` was added so the "configure all from root" instructions actually work.
 
 ## Assignment Progress
 
@@ -104,7 +104,7 @@ The following issues were identified and fixed in this refactor of the ray-traci
     *   **Edge Detection:** Laplacian 3x3 kernel implementation.
     *   **Gaussian Blur:** Standard 2D Gaussian and optimized Separable Gaussian implementation.
 *   **Border Policies:** Implemented `MIRROR` and `REPEAT` policies for handling out-of-bounds coordinates.
-*   **Fixes:** Resolved CMake compatibility issues with the embedded `glfw` library.
+*   **Build:** the vendored GLFW 3.2 was removed; GLFW 3.4 is fetched via `FetchContent`.
 
 ### Aufgabenblatt 08: Instanced Rendering & Imposters
 *   **Techniques:** Implemented **Instanced Rendering** to efficiently render a forest of trees and **Imposters (Billboards)** for level-of-detail optimization.

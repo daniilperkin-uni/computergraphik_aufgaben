@@ -117,7 +117,7 @@ The OpenGL viewers load their shaders via relative paths, so start them from the
 
 *   **Language Standard:** Modern C++ features are used, all sheets compile as C++17.
 *   **Memory Management:** `std::shared_ptr` is commonly employed for robust object management within scene graphs and object hierarchies, promoting safer memory handling.
-*   **Code Structure:** Code is logically organized into modules. Note that the codebase does **not** use a `namespace cg` (or any project namespace) despite earlier documentation claims - symbols live in the global namespace.
+*   **Code Structure:** Code is logically organized into modules. The image/rasterizer code of sheets 02, 06 and 07 lives in `namespace cg`; the ray tracers (03/04) and sheets 08/09 use the global namespace.
 *   **Documentation:** Code includes comments (some in German) explaining complex logic and `TODO` markers indicating areas for student implementation.
 
 ---
