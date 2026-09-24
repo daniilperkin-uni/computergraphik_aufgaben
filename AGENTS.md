@@ -16,7 +16,7 @@ The project evolves through various topics:
     *   **GLAD:** An OpenGL loader.
     *   **GLM:** OpenGL Mathematics (header-only library for C++ with GLSL-like types and functions).
     *   **Dear ImGui:** A bloat-free graphical user interface library for C++.
-    *   **glowl:** (likely a custom or course-specific library for OpenGL abstractions).
+    *   **glowl:** open-source lightweight C++ wrapper library for OpenGL objects (shader programs, textures, buffers); vendored in sheets 06 and 07.
 
 ## Building and Running the Project
 
@@ -24,28 +24,16 @@ The project uses CMake for its build system. Each `Aufgabenblatt` (assignment sh
 
 **General Build Steps:**
 
-1.  **Create a build directory:** It is recommended to create a `build` directory at the root of the project or within specific assignment folders.
+1.  **Configure** out of source, pointing `-S` at the sheet that contains the `CMakeLists.txt` and `-B` at its build directory:
     ```bash
-    mkdir build
-    cd build
+    cmake -S Aufgabenblatt06/00_student_setup/code -B Aufgabenblatt06/00_student_setup/code/build
     ```
-2.  **Configure CMake:** Run CMake to generate the build system files (e.g., Makefiles or Visual Studio projects). If running from the project root `build` directory, you might configure for all assignments.
-    ```bash
-    cmake ..
-    ```
-    To configure a specific assignment (e.g., `Aufgabenblatt06/00_student_setup/code`):
-    ```bash
-    mkdir Aufgabenblatt06/00_student_setup/code/build
-    cd Aufgabenblatt06/00_student_setup/code/build
-    cmake ../../..
-    ```
-    *Note: The `cmake ..` or `cmake ../../..` path depends on where you create your build directory relative to the `CMakeLists.txt` you want to configure.*
+    Use `cmake -S . -B build` to configure all sheets from the repository root.
 
-3.  **Build the project:** Compile the source code using the generated build system.
+2.  **Build:**
     ```bash
-    cmake --build .
+    cmake --build Aufgabenblatt06/00_student_setup/code/build --parallel
     ```
-    This command should be executed from the build directory created in the previous step.
 
 **Running Executables:**
 
