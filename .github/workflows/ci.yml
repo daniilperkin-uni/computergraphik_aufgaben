@@ -6,29 +6,30 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  APT_DEPS: libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
+
 jobs:
   build:
-    name: Build (CMake)
+    name: Build ${{ matrix.sheet }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - sheet: Aufgabenblatt02
-            source_dir: Aufgabenblatt02/aufgaben_blatt_02_/code
-          - sheet: Aufgabenblatt03
-            source_dir: Aufgabenblatt03/code
-          - sheet: Aufgabenblatt04
-            source_dir: Aufgabenblatt04/code
-          - sheet: Aufgabenblatt09
-            source_dir: Aufgabenblatt09/code
+          - { sheet: Aufgabenblatt02, source_dir: Aufgabenblatt02/aufgaben_blatt_02_/code }
+          - { sheet: Aufgabenblatt03, source_dir: Aufgabenblatt03/code }
+          - { sheet: Aufgabenblatt04, source_dir: Aufgabenblatt04/code }
+          - { sheet: Aufgabenblatt06, source_dir: Aufgabenblatt06/00_student_setup/code }
+          - { sheet: Aufgabenblatt07, source_dir: Aufgabenblatt07/00_student_setup/code }
+          - { sheet: Aufgabenblatt08, source_dir: Aufgabenblatt08/00_student_setup/code }
+          - { sheet: Aufgabenblatt09, source_dir: Aufgabenblatt09/code }
+          - { sheet: root, source_dir: . }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install OpenGL and X11 dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
+        run: sudo apt-get update && sudo apt-get install -y $APT_DEPS
       - name: Configure CMake
-        run: cmake -S ${{ matrix.source_dir }} -B ${{ matrix.source_dir }}/build
+        run: cmake -S ${{ matrix.source_dir }} -B ${{ matrix.source_dir }}/build -DCMAKE_BUILD_TYPE=Release
       - name: Build
-        run: cmake --build ${{ matrix.source_dir }}/build
+        run: cmake --build ${{ matrix.source_dir }}/build --config Release --parallel
