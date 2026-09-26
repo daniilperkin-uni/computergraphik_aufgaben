@@ -109,7 +109,52 @@ cd Aufgabenblatt07/00_student_setup/code
 ./build/ImageViewer07 bilder/<input>.png out.png
 ```
 
-The OpenGL viewers load their shaders via relative paths, so start them from the sheet's `code` directory.
+The OpenGL viewers load their shaders via relative paths, so where you start them
+from matters: `Aufgabenblatt08` and `Aufgabenblatt09` hardcode `../shaders/...`,
+so they only work when started from their `code/build` directory, while
+`ImageViewer` (Blatt 06) and `ImageViewer07` (Blatt 07) try several path prefixes
+and also work from the sheet's `code` directory.
+
+**Verifying the Blatt 03 ray tracer against its reference images**
+
+`Aufgabenblatt03` renders one image and compares it with
+`code/reference_rayGeneration.ppm` or `code/reference_sphereIntersection.ppm`,
+depending on the `TEST_RAY_GENERATION` / `TEST_SPHERE_INTERSECT` flags in its
+`main.cpp`. It now exits with a non-zero status when the comparison reports more
+than 0.1% different pixels, which is wired up as a ctest test and therefore also
+runs in CI:
+
+```bash
+cd Aufgabenblatt03/code/build
+ctest --output-on-failure
+```
+
+**Scene asset for `Aufgabenblatt09`**
+
+`SceneShading` renders a glTF scene from `scene.glb`. That binary asset is **not**
+part of this repository - no `.glb` file is committed anywhere - so you have to
+place the scene that belongs to the Blatt 09 exercise yourself. The program
+reports the path it tried and aborts if the file is missing, instead of opening a
+window with an empty scene.
+
+Option 1: put the asset where the sheet expects it (a `scene_file` folder next to
+`code/`, matching the default `../../scene_file/resources/scene.glb` when the
+viewer runs from `code/build`):
+
+```
+Aufgabenblatt09/
+├── code/
+└── scene_file/
+    └── resources/
+        └── scene.glb
+```
+
+Option 2: pass the location as the first command line argument:
+
+```bash
+cd Aufgabenblatt09/code/build
+./SceneShading /path/to/scene.glb
+```
 
 *(The exact path and executable name will vary depending on the specific assignment and your operating system.)*
 
