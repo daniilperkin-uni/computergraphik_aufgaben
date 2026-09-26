@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iostream>
 #include <random>
+#include <stdexcept>
+#include <string>
 #include <thread>
 #include <memory>
 
@@ -72,7 +74,7 @@ void addGltfNode(
 void importGltfScene(Scene& scene, std::string const& gltf_filepath);
 
 void InitRenderer();
-void InitScene();
+void InitScene(std::string const& scene_path);
 void UpdateShaders();
 int KeyAxisValue(GLFWwindow* window, int key1, int key2);
 void applyJoystickInput();
@@ -98,14 +100,22 @@ float g_cam_pitch = 0.0f;         // camera up down orientation in [-1.5, 1.5]
 float g_diff_cam_pitch = 0.f;      // change of g_cam_pitch per tick
 
 /// Entry point into the OpenGL example application.
-int main() {
+/// @param argc Number of command line arguments.
+/// @param argv argv[1] optionally names the .glb scene file to load. When it is
+///             omitted, "../../scene_file/resources/scene.glb" is used - that
+///             asset is not part of this repository, see README.md.
+int main(int argc, char** argv) {
     try {
         // initialize glfw
         GlfwInstance::init();
 
+        // the scene asset can be provided as the first command line argument
+        std::string const scene_path =
+            (argc > 1) ? std::string(argv[1]) : std::string("../../scene_file/resources/scene.glb");
+
         // initialize this application
         InitRenderer();
-        InitScene();
+        InitScene(scene_path);
 
         // render until the window should close
         while (!glfwWindowShouldClose(g_window)) {
@@ -174,9 +184,13 @@ void InitRenderer() {
 }
 
 /// Creates geometry and uniform buffers.
-void InitScene() {
+/// @param scene_path Path of the .glb scene file that is imported. The path is
+///                   resolved relative to the working directory, so it must
+///                   either be absolute or the viewer must be started from the
+///                   directory the relative path was written for.
+void InitScene(std::string const& scene_path) {
     // load gltf file
-    importGltfScene(g_scene, "../../scene_file/resources/scene.glb");
+    importGltfScene(g_scene, scene_path);
 
     // create pointlights
     {
@@ -617,8 +631,12 @@ void importGltfScene(Scene& scene, std::string const& gltf_filepath) {
     }
 
     if (!ret) {
-        std::cerr << "Failed to parse glTF\n" << std::endl;
-        return;
+        // Failing silently used to leave an empty scene on screen, which is
+        // indistinguishable from a working renderer with nothing to draw.
+        throw std::runtime_error(
+            "Failed to load the glTF scene from \"" + gltf_filepath
+            + "\". Place the scene file at that path or pass its location as the "
+              "first command line argument (see README.md).");
     }
 
     // iterate over nodes of model and add entities+components to world

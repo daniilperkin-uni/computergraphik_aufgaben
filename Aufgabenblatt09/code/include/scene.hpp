@@ -67,8 +67,8 @@ struct MeshComponent {
     GLuint albedo_tx_name;
     /// OpenGL texture name for normal map
     GLuint normal_tx_name;
-    /// OpenGL texture name for metallic/rougness map
-    /// (usually stored in green and blue channel respectively)
+    /// OpenGL texture name for metallic/roughness map
+    /// (glTF stores roughness in the green and metallic in the blue channel)
     GLuint metallic_roughness_tx_name;
 };
 
