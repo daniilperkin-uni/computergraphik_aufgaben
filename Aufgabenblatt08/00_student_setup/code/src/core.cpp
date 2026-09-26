@@ -38,7 +38,8 @@ std::string GetShaderError(GLuint shader) {
         return std::string();
 
     // copy error log into a buffer
-    std::vector<GLchar> info_log(info_log_length);
+    // +1 guarantees a terminating NUL so std::string stops at the log's end
+    std::vector<GLchar> info_log(info_log_length + 1, '\0');
     glGetShaderInfoLog(shader, info_log_length, nullptr, info_log.data());
     return std::string(info_log.data());
 }
@@ -54,7 +55,8 @@ std::string GetProgramError(GLuint program) {
         return std::string();
 
     // copy error log into a buffer
-    std::vector<GLchar> info_log(info_log_length);
+    // +1 guarantees a terminating NUL so std::string stops at the log's end
+    std::vector<GLchar> info_log(info_log_length + 1, '\0');
     glGetProgramInfoLog(program, info_log_length, nullptr, info_log.data());
     return std::string(info_log.data());
 }

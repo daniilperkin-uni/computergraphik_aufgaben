@@ -1,4 +1,4 @@
-#version 420 core
+#version 440 core
 
 uniform sampler2D tree_sprite_tx2D;
 

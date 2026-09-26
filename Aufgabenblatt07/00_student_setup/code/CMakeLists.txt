@@ -17,9 +17,24 @@ FetchContent_Declare(glfw
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(glfw)
 
-# Application sources (glad/glowl/imgui are compiled in directly)
-file(GLOB source_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-file(GLOB header_files "${CMAKE_CURRENT_SOURCE_DIR}/*.h*")
+# Application sources (glad/glowl/imgui are compiled in directly).
+# The sheet's own sources are listed explicitly: file(GLOB) does not see files
+# added after the configure step, so a new source file would be left out.
+set(source_files
+  ImageBase.cpp
+  ImageConverter.cpp
+  ImageFilter.cpp
+  ImageIO.cpp
+  ImageViewer.cpp
+  main.cpp)
+set(header_files
+  Image.h
+  ImageBase.h
+  ImageConverter.h
+  ImageFilter.h
+  ImageIO.h
+  ImageTraits.h
+  ImageViewer.h)
 file(GLOB glowl_files "${CMAKE_CURRENT_SOURCE_DIR}/glowl/*pp")
 file(GLOB imgui_files "${CMAKE_CURRENT_SOURCE_DIR}/imgui/*")
 file(GLOB_RECURSE glad_files "${CMAKE_CURRENT_SOURCE_DIR}/glad/*")

@@ -17,13 +17,53 @@ find_package(OpenMP)
 include(libs/libs.cmake)
 
 # Project files
-file(GLOB source_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-file(GLOB header_files "${CMAKE_CURRENT_SOURCE_DIR}/*.h*")
-file(GLOB_RECURSE scene_header_files "${CMAKE_CURRENT_SOURCE_DIR}/scene/*.h")
-file(GLOB_RECURSE scene_source_files "${CMAKE_CURRENT_SOURCE_DIR}/scene/*.cpp")
-file(GLOB image_header_files "${CMAKE_CURRENT_SOURCE_DIR}/image/*.h")
-file(GLOB image_source_files "${CMAKE_CURRENT_SOURCE_DIR}/image/*.cpp")
-file(GLOB shader_files "${CMAKE_CURRENT_SOURCE_DIR}/shader/*")
+# Explicit listings: file(GLOB) does not see files added or removed after the
+# configure step, so a new source file would silently miss the build.
+set(source_files
+  Math1.cpp
+  Rasterizer.cpp
+  main.cpp)
+set(header_files
+  Math1.h
+  Rasterizer.h)
+set(scene_source_files
+  scene/Camera.cpp
+  scene/Lights/AmbientLight.cpp
+  scene/Lights/LightObject.cpp
+  scene/Lights/PointLight.cpp
+  scene/Object.cpp
+  scene/Objects/Container.cpp
+  scene/Objects/Cube.cpp
+  scene/Objects/SceneObject.cpp
+  scene/Objects/Sphere.cpp
+  scene/Objects/Triangle.cpp
+  scene/Scene.cpp)
+set(scene_header_files
+  scene/Camera.h
+  scene/Lights/AmbientLight.h
+  scene/Lights/LightObject.h
+  scene/Lights/PointLight.h
+  scene/Object.h
+  scene/Objects/Container.h
+  scene/Objects/Cube.h
+  scene/Objects/SceneObject.h
+  scene/Objects/Sphere.h
+  scene/Objects/Triangle.h
+  scene/Scene.h)
+set(image_source_files
+  image/ImageBase.cpp
+  image/ImageIO.cpp
+  image/ImageViewer.cpp)
+set(image_header_files
+  image/Image.h
+  image/ImageBase.h
+  image/ImageIO.h
+  image/ImageTraits.h
+  image/ImageViewer.h)
+set(shader_files
+  shader/display_texture_f.glsl
+  shader/display_texture_v.glsl
+  shader/display_texture_v_downgrade.glsl)
 
 # Target
 add_executable(${PROJECT_NAME}

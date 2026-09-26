@@ -1,4 +1,4 @@
-#version 420 core
+#version 440 core
 
 layout(binding = 0) uniform PerFrame {
     mat4 view; // world coords -> camera coords

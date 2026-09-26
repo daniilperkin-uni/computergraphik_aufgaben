@@ -17,8 +17,13 @@ endif ()
 include(libs/libs.cmake)
 
 # Project files
-file(GLOB_RECURSE source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-file(GLOB_RECURSE header_files "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*")
+# Sources are listed explicitly: file(GLOB) does not see files added after the
+# configure step, so a new source file would silently miss the build.
+set(source_files
+  src/core.cpp
+  src/main.cpp)
+set(header_files
+  include/core.hpp)
 file(GLOB shader_files "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*")
 
 # Target

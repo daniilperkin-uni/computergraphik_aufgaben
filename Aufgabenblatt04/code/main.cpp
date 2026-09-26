@@ -11,9 +11,9 @@
 #include "util.h"
 #include "vec3.h"
 
-const static int WIDTH = 600;
-const static int HEIGHT = 600;
-const static int MAX_DEPTH = 5;
+constexpr int WIDTH = 600;
+constexpr int HEIGHT = 600;
+constexpr int MAX_DEPTH = 5;
 
 //////////
 // TODO 2:
