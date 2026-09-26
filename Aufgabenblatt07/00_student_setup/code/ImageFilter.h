@@ -34,8 +34,8 @@ namespace cg
                 std::pair<int, int> offset,
                 BorderPolicy border_policy)
             {
-                const int x = static_cast<int>(std::get<0>(coordinates)) + std::get<0>(offset);
-                const int y = static_cast<int>(std::get<1>(coordinates)) + std::get<1>(offset);
+                int x = static_cast<int>(std::get<0>(coordinates)) + std::get<0>(offset);
+                int y = static_cast<int>(std::get<1>(coordinates)) + std::get<1>(offset);
 
                 if (x < 0 || x >= static_cast<int>(image.get_width()) ||
                     y < 0 || y >= static_cast<int>(image.get_height()))
