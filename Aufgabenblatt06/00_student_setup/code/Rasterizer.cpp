@@ -405,14 +405,15 @@ void cg::Rasterizer::rasterizeLine(const cg::Triangle::Point& point_start, const
         setPixel(Point3D(static_cast<float>(current_x), static_cast<float>(current_y), interpolated_z), interpolated_color);
 
         // Update the error term and y-coordinate for the next iteration.
-        // If the error is negative, it means the ideal line has crossed the midpoint,
-        // so increment/decrement y and reset the error term.
-        if (error < 0)
+        // The canonical integer Bresenham steps y as soon as the accumulated
+        // error reaches zero, i.e. once the ideal line has crossed the
+        // midpoint between the current and the next scanline.
+        if (error >= 0)
         {
             y += ystep;
-            error += 2 * dx; // Reset error by adding 2*dx
+            error -= 2 * dx; // Step taken: subtract a full x-run from the error
         }
-        error -= 2 * dy; // Always decrease error by 2*dy
+        error += 2 * dy; // Always add the slope contribution
     }
 
 } // End of rasterizeLine function
