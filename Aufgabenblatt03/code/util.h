@@ -31,8 +31,10 @@ public:
  * @param referenceFileName The reference file to compare against.
  * @param testName The name of the test (here: ray generation resp. sphere intersection)
  * @param framebuffer The framebuffer containing the rendered pixel data.
+ * @return true when the rendered image matches the reference within the
+ *         tolerance, false for a mismatch or when the reference cannot be read
  */
-static void comparePPM(const std::string referenceFileName, const std::string testName,
+static bool comparePPM(const std::string referenceFileName, const std::string testName,
                        const std::vector<Vec3d> &framebuffer)
 {
     std::ifstream file(referenceFileName.c_str(), std::ios::in | std::ios::binary);
@@ -50,19 +52,19 @@ static void comparePPM(const std::string referenceFileName, const std::string te
         if (width * height != framebuffer.size())
         {
             std::cerr << "Width and height differ from the reference image." << std::endl;
-            return;
+            return false;
         }
 
         if (magicNumber != "P6")
         {
             std::cerr << "Invalid magic number in reference image. This file is not a valid .ppm file." << std::endl;
-            return;
+            return false;
         }
 
         if (maxValue != "255")
         {
             std::cerr << "Wrong maximum number stored in the reference .ppm file." << std::endl;
-            return;
+            return false;
         }
 
         std::vector<char> pixel_data;
@@ -83,7 +85,9 @@ static void comparePPM(const std::string referenceFileName, const std::string te
                 ++cnt;
         }
 
-        if (cnt > 0.001*framebuffer.size()) // 0.1% tolerance
+        const bool match = cnt <= 0.001*framebuffer.size(); // 0.1% tolerance
+
+        if (!match)
         {
             std::cout << cnt*100/framebuffer.size()
                       << "% of the pixel values did not match the reference image in the "
@@ -95,12 +99,14 @@ static void comparePPM(const std::string referenceFileName, const std::string te
         }
 
         file.close();
+        return match;
     }
     else
     {
         std::cerr << "Something went wrong during comparison to the reference image "
                   << referenceFileName << std::endl;
         std::cerr << "Did you check the path to the reference images?" << std::endl;
+        return false;
     }
 }
 

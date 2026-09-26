@@ -11,8 +11,12 @@
 const static bool TEST_RAY_GENERATION = false;
 const static bool TEST_SPHERE_INTERSECT = true;
 
-const static int WIDTH = 600;
-const static int HEIGHT = 600;
+constexpr int WIDTH = 600;
+constexpr int HEIGHT = 600;
+
+// Set to true when a configured comparison against a reference image failed,
+// which makes main() return a non-zero exit code (used by ctest, see CMakeLists.txt).
+static bool g_comparison_failed = false;
 
 /**
  * @brief Method to check a ray for intersections with any object of the scene.
@@ -138,7 +142,7 @@ void render(const Vec3i viewport, const std::vector<std::shared_ptr<SceneObject>
 
             // Speichere die Farbe im Framebuffer
             int pixelIndex = j * viewport[0] + i;
-            framebuffer[pixelIndex] = pixelColor;
+            framebuffer.at(static_cast<size_t>(pixelIndex)) = pixelColor;
         }
     }
 
@@ -147,11 +151,13 @@ void render(const Vec3i viewport, const std::vector<std::shared_ptr<SceneObject>
 
     if (TEST_RAY_GENERATION)
     {
-        comparePPM("../reference_rayGeneration.ppm", "ray generation test", framebuffer);
+        g_comparison_failed =
+            !comparePPM("../reference_rayGeneration.ppm", "ray generation test", framebuffer);
     }
     else if (TEST_SPHERE_INTERSECT)
     {
-        comparePPM("../reference_sphereIntersection.ppm", "sphere intersection test", framebuffer);
+        g_comparison_failed =
+            !comparePPM("../reference_sphereIntersection.ppm", "sphere intersection test", framebuffer);
     }
 }
 
@@ -170,5 +176,7 @@ int main()
 
     render(viewport, objects);
 
-    return 0;
+    // Non-zero exit code when the reference comparison did not match, so the
+    // build can be verified by ctest (see CMakeLists.txt).
+    return g_comparison_failed ? 1 : 0;
 }

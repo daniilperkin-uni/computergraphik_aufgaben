@@ -33,3 +33,8 @@ jobs:
         run: cmake -S ${{ matrix.source_dir }} -B ${{ matrix.source_dir }}/build -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build ${{ matrix.source_dir }}/build --config Release --parallel
+      - name: Run tests
+        # Only Aufgabenblatt03 registers a ctest test (render + reference comparison)
+        if: matrix.sheet == 'Aufgabenblatt03'
+        working-directory: ${{ matrix.source_dir }}/build
+        run: ctest --output-on-failure
