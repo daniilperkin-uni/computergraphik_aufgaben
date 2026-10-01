@@ -1,7 +1,10 @@
 # Build artifacts
 build/
+build_ab*/
+cmake-build-*/
 CMakeCache.txt
 CMakeFiles/
+compile_commands.json
 *.o
 *.exe
 
@@ -9,6 +12,10 @@ CMakeFiles/
 .vscode/
 .idea/
 *.swp
+.cache/
+
+# Program output (ray tracers write ./result.ppm)
+result.ppm
 
 # OS
 .DS_Store
