@@ -153,7 +153,7 @@ namespace cg
         }
         else
         {
-            std::cerr << "Could not located display_texture_*.glsl shader source files." << std::endl;
+            std::cerr << "Could not locate display_texture_*.glsl shader source files." << std::endl;
             return;
         }
 #else
@@ -174,7 +174,7 @@ namespace cg
         }
         else
         {
-            std::cerr << "Could not located display_texture_*.glsl shader source files." << std::endl;
+            std::cerr << "Could not locate display_texture_*.glsl shader source files." << std::endl;
             return;
         }
 #endif
@@ -205,7 +205,7 @@ namespace cg
         }
         else
         {
-            std::cerr << "Could not located seperated_gausian_c.glsl shader source files." << std::endl;
+            std::cerr << "Could not locate seperated_gaussian_c.glsl shader source files." << std::endl;
             return;
         }
 

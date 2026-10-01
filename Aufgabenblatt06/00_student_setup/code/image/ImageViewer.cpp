@@ -138,7 +138,7 @@ namespace cg
         }
         else
         {
-            std::cerr << "Could not located display_texture_*.glsl shader source files." << std::endl;
+            std::cerr << "Could not locate display_texture_*.glsl shader source files." << std::endl;
             return;
         }
 #else
