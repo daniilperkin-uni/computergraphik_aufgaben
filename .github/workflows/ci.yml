@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   APT_DEPS: libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
 
@@ -27,6 +34,11 @@ jobs:
           - { sheet: root, source_dir: . }
     steps:
       - uses: actions/checkout@v5
+      - name: Cache fetched dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.source_dir }}/build/_deps
+          key: deps-${{ runner.os }}-${{ matrix.sheet }}-${{ hashFiles('**/libs.cmake', '**/CMakeLists.txt') }}
       - name: Install OpenGL and X11 dependencies
         run: sudo apt-get update && sudo apt-get install -y $APT_DEPS
       - name: Configure CMake
