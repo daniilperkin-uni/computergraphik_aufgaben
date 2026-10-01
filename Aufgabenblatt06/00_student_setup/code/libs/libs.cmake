@@ -38,7 +38,7 @@ FetchContent_MakeAvailable(glm)
 # copy a custom CMakeLists.txt file into the downloaded source directory.
 FetchContent_Declare(imgui
         URL https://github.com/ocornut/imgui/archive/refs/tags/v1.86.zip
-        URL_HASH MD5=bccb1c173296979e6a61b4f9da572429
+        URL_HASH SHA256=226f674af4c8eb853844ee9ef5ebdba6952e83488c1a6507920d0ede0d153ac6
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 FetchContent_GetProperties(imgui)
