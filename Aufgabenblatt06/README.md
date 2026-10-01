@@ -1,36 +1,29 @@
 # Aufgabenblatt 06 - Real-time Rasterization and Interactive Graphics
 
-This assignment focuses on real-time computer graphics using a rasterization pipeline, integrating various external libraries to create interactive scenes. Key aspects include:
-
-*   **Rasterization Pipeline:** Implementation of concepts like vertex processing, primitive assembly, rasterization, and fragment processing.
-*   **Scene Graph Management:** Creation and manipulation of hierarchical scene structures with objects, cameras, and lights.
-*   **Camera Controls:** Implementing different camera types and interactive camera movement.
-*   **Lighting Models:** Application of various lighting techniques (e.g., ambient, point lights) to shade objects.
-*   **Geometric Primitives:** Rendering of fundamental shapes such as triangles, cubes, and spheres.
-*   **External Library Integration:** Extensive use of libraries like GLFW (windowing, input), GLAD (OpenGL loading), GLM (mathematics), and Dear ImGui (GUI).
-*   **Complex Scene Generation:** Procedural generation of complex scenes, exemplified by the "DNA Double Helix" scene.
+A software rasterizer (points / wireframe / filled triangles with z-buffer, Bresenham
+lines, barycentric interpolation and point plus ambient lighting) with an OpenGL image
+viewer. The default scene is a procedurally generated DNA double helix.
 
 ## Build and Run
 
-To build and run the solutions for "Aufgabenblatt 06", follow the general build instructions in the main `README.md` from the project root. The main code for this assignment is located in `Aufgabenblatt06/00_student_setup/code/`.
-
-**Example Build (from project root):**
 ```bash
-# From the project root directory
-mkdir build_ab06
-cd build_ab06
-cmake ../Aufgabenblatt06/00_student_setup/code/
-cmake --build .
-```
+# from the repository root
+cmake -S Aufgabenblatt06/00_student_setup/code -B Aufgabenblatt06/00_student_setup/code/build
+cmake --build Aufgabenblatt06/00_student_setup/code/build --parallel
 
-**Running the Executable:**
-
-The primary executable for this assignment is typically named `ImageViewer`.
-```bash
-# On Linux/macOS (from build_ab06 directory)
+cd Aufgabenblatt06/00_student_setup/code/build
 ./ImageViewer
-
-# On Windows (from build_ab06 directory)
-.\ImageViewer.exe
 ```
-This will launch an interactive viewer displaying the scenes defined in the assignment.
+
+The sheet's CMakeLists defaults to a release build (rasterizing is slow in Debug, which
+matters for the interactive auto-update). Start the viewer from `code/build` or `code/`:
+it looks for its shaders under `../shader/`, `../../shader/` and `shader/` relative to
+the working directory. GLFW, ImGui (1.86) and GLM are fetched by CMake on the first
+configure, so that step needs network access.
+
+## Notes
+
+- Target: `ImageViewer`; needs an OpenGL 4.4-capable driver (see the root README).
+- The written answers to task 1.5 (z-buffer and clipping) are in `aufgabe-1-5.md`.
+- `scene/` holds the scene graph, camera and lights; `image/` the image class and the
+  viewer; `Rasterizer.cpp` the drawing code.

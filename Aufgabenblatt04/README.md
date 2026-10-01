@@ -1,22 +1,25 @@
-# Aufgabenblatt 04 - Advanced Rendering Concepts
+# Aufgabenblatt 04 - Point Lights, Shadows and Reflections
 
-This assignment likely delves deeper into rendering techniques, building upon the foundational concepts introduced in previous assignments. Possible topics could include:
-
-*   **Advanced Ray Tracing:** Enhancements to ray tracing, such as shadows, reflections, refractions, or more complex materials.
-*   **Shading Models:** Implementation of different lighting and shading models (e.g., Phong, Blinn-Phong) to achieve more realistic appearances.
-*   **Camera Models:** Exploration of different camera projections and perspectives.
-*   **Geometric Primitives:** Introduction of more complex geometric shapes or scene organization.
+Extends the Blatt 03 ray tracer with a Phong lighting model (the ambient term is added
+once, diffuse and specular contributions per light), shadow rays, distance attenuation
+over 16 point lights, recursive specular reflections (depth limit 5) and an
+OpenMP-parallel render loop.
 
 ## Build and Run
 
-To build and run the solutions for "Aufgabenblatt 04", follow the general build instructions in the main `README.md` from the project root. You can navigate into the `Aufgabenblatt04/code/` directory to build it specifically.
-
-**Example Build (from project root):**
 ```bash
-# From the project root directory
-mkdir build_ab04
-cd build_ab04
-cmake ../Aufgabenblatt04/code/
-cmake --build .
+# from the repository root
+cmake -S Aufgabenblatt04/code -B Aufgabenblatt04/code/build
+cmake --build Aufgabenblatt04/code/build --parallel
+
+cd Aufgabenblatt04/code/build
+./Raytracer04     # writes result.ppm into the working directory
 ```
-The main executable name will be determined by the `CMakeLists.txt` in that directory.
+
+`referenz.png` and `referenz-hd.png` are the exercise's reference images; compare the
+rendered `result.ppm` against them by eye (this sheet has no automated check).
+
+## Notes
+
+- Target: `Raytracer04`; no external dependencies. OpenMP is used when the compiler
+  provides it, so the render is multi-threaded in a local release build and in CI.

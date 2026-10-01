@@ -1,21 +1,29 @@
 # Aufgabenblatt 03 - Introduction to Ray Tracing
 
-This assignment introduces the core principles of ray tracing, a powerful technique for rendering realistic images. Key topics include:
+Ray generation and ray/object intersection. The program renders a fixed 600 x 600 scene
+to `result.ppm` and compares it against the reference image that matches the active test
+flag.
 
-*   **Ray Generation:** How to generate rays from a camera through pixels into a 3D scene.
-*   **Scene Object Intersection:** Implementing intersection tests between rays and various geometric primitives (e.g., spheres, planes).
-*   **Basic Rendering Pipeline:** Tracing rays, determining hits, and calculating basic colors based on intersections.
+## Build, Run and Test
 
-## Build and Run
-
-To build and run the solutions for "Aufgabenblatt 03", follow the general build instructions in the main `README.md` from the project root. You can navigate into the `Aufgabenblatt03/code/` directory to build it specifically.
-
-**Example Build (from project root):**
 ```bash
-# From the project root directory
-mkdir build_ab03
-cd build_ab03
-cmake ../Aufgabenblatt03/code/
-cmake --build .
+# from the repository root
+cmake -S Aufgabenblatt03/code -B Aufgabenblatt03/code/build
+cmake --build Aufgabenblatt03/code/build --parallel
+
+cd Aufgabenblatt03/code/build
+./Raytracer03                # writes result.ppm next to the binary
+
+ctest --output-on-failure    # renders and compares against ../reference_*.ppm
 ```
-The main executable name will be determined by the `CMakeLists.txt` in that directory (likely `main`).
+
+`TEST_RAY_GENERATION` / `TEST_SPHERE_INTERSECT` at the top of `main.cpp` select which
+reference image is compared; the committed state checks the sphere-intersection result.
+The program exits non-zero when more than 0.1% of the pixels differ, and ctest runs the
+same comparison in CI.
+
+## Notes
+
+- Target: `Raytracer03`; no external dependencies.
+- Start it from `code/build` - the `../reference_*.ppm` paths are relative to the working
+  directory.

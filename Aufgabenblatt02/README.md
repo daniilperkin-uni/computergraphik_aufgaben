@@ -1,21 +1,26 @@
 # Aufgabenblatt 02 - Image Processing Fundamentals
 
-This assignment focuses on the fundamental concepts of digital image processing. It involves:
-
-*   **Image Representation:** Defining classes for image structures and handling different color spaces (e.g., RGB, HSV).
-*   **Basic Image Manipulation:** Implementing operations such as reading, writing, and basic transformations of images.
-*   **Color Space Conversions:** Understanding and implementing conversions between various color models.
+The image class and color-space conversions: grayscale, black/white, an RGB -> HSV -> RGB
+round trip, and a color-key effect - each selected from the console.
 
 ## Build and Run
 
-To build and run the solutions for "Aufgabenblatt 02", follow the general build instructions in the main `README.md` from the project root. You can navigate into the `Aufgabenblatt02/aufgaben_blatt_02_/` directory to build it specifically.
-
-**Example Build (from project root):**
 ```bash
-# From the project root directory
-mkdir build_ab02
-cd build_ab02
-cmake ../Aufgabenblatt02/aufgaben_blatt_02_/
-cmake --build .
+# from the repository root
+cmake -S Aufgabenblatt02/aufgaben_blatt_02_/code -B Aufgabenblatt02/aufgaben_blatt_02_/code/build
+cmake --build Aufgabenblatt02/aufgaben_blatt_02_/code/build --parallel
+
+./Aufgabenblatt02/aufgaben_blatt_02_/code/build/ColorSpaces <source> <target>
 ```
-The main executable name will be determined by the `CMakeLists.txt` in that directory.
+
+The program asks for the exercise number on stdin: 1 = grayscale, 2 = black/white,
+3 = RGB -> HSV -> RGB, 4 = color-key effect in HSV.
+
+`images/` holds the sample data: `ginkgo.ppm`, `lena.ppm` and `seattle.pgm` are inputs
+(the image I/O reads PBM/PGM/PPM only, so the `.jpg` is just the original photo, see
+`images/image_source.txt`), while `ginkgo_gray.pgm`, `ginkgo_black_and_white.pgm` and
+`ginkgo_modified.ppm` are kept results of exercises 1, 2 and 4.
+
+## Notes
+
+- Target: `ColorSpaces`; no external dependencies.

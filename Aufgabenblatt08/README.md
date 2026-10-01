@@ -1,52 +1,31 @@
-# Aufgabenblatt 08 - Instanced Rendering & Imposters
+# Aufgabenblatt 08 - Instanced Rendering and Imposters
 
-This assignment introduces advanced rendering techniques to efficiently render a large scene with many objects, specifically a forest of trees.
+Renders a forest of 192 trees with instanced draw calls, and the same trees as billboard
+imposters, using Direct State Access (OpenGL 4.5) for all buffers, VAOs and textures.
 
-## Core Concepts
+## Build and Run
 
-*   **Instanced Rendering:** Instead of issuing a draw call for each tree, we use `glDrawElementsInstanced` to render multiple copies of the same geometry (tree or sprite) in a single draw call. Per-instance data (like model matrices) is stored in Uniform Buffers or Vertex Buffers.
-*   **Imposters (Billboards):** To further optimize rendering, distant complex 3D objects (trees) are replaced with simple 2D textured quads (sprites) that always face the camera or are aligned in a specific way. This significantly reduces the polygon count.
-*   **Direct State Access (DSA):** Modern OpenGL (4.5+) allows modifying OpenGL objects (buffers, textures, VAOs) without binding them to the context first. This assignment practices using DSA functions like `glNamedBufferData`, `glVertexArrayAttribBinding`, `glCreateTextures`, etc.
+```bash
+# from the repository root
+cmake -S Aufgabenblatt08/00_student_setup/code -B Aufgabenblatt08/00_student_setup/code/build
+cmake --build Aufgabenblatt08/00_student_setup/code/build --parallel
 
-## Implemented Features
+cd Aufgabenblatt08/00_student_setup/code/build
+./Geometrie
+```
 
-### 1. Scene Setup & Camera
-*   **Camera Control:** Implemented View and Projection matrix calculation in `UpdateScene` using `glm::lookAt` and `glm::perspective`.
-*   **Input Handling:** Support for keyboard and joystick input to move the camera through the scene.
+Start it from `code/build`: the shaders (`../shaders/`) and the tree sprite
+(`../resources/pine_tree_sprite.png`) are loaded relative to the working directory. GLFW
+and GLM are fetched by CMake on the first configure, so that step needs network access.
 
-### 2. Geometry & Buffers (DSA)
-*   **Render Batch Creation:** Implemented `CreateRenderBatch` to set up Vertex Array Objects (VAOs), Vertex Buffers (VBOs), and Index Buffers (IBOs) using exclusively DSA functions (`glCreateBuffers`, `glNamedBufferData`, `glVertexArrayElementBuffer`, etc.).
-*   **Tree Geometry:** Defined the vertices and indices for a simplified 3D tree model.
-*   **Imposter Geometry:** Defined the geometry for a 2D quad (imposter) to represent the tree.
+## Controls
 
-### 3. Textures & Shaders
-*   **Texture Creation:** Implemented `CreateSpriteTexture` to load an image and create an OpenGL texture object using DSA (`glCreateTextures`, `glTextureStorage2D`, `glTextureSubImage2D`).
-*   **Texture Parameters:** Configured texture wrapping (Mirrored Repeat) and filtering (Linear Mipmap Linear) parameters.
-*   **Shaders:** Utilization of specific shaders for the ground, 3D trees, and tree imposters.
+- `W` / `A` / `S` / `D`: move the camera; `Shift` / `Space`: up / down
+- Arrow keys: rotate; gamepads are supported as well
+- `R`: reload the shaders
 
-## Usage
+## Notes
 
-1.  **Build:**
-    ```bash
-    mkdir build
-    cd build
-    cmake ..
-    cmake --build .
-    ```
-2.  **Run:**
-    Execute the generated executable (e.g., `Geometrie` or similar name depending on CMake configuration).
-    ```bash
-    ./Geometrie
-    ```
-
-3.  **Controls:**
-    *   **W/A/S/D:** Move camera (Forward, Left, Backward, Right).
-    *   **Shift/Space:** Move camera Up/Down.
-    *   **Arrow Keys:** Rotate camera (Yaw/Pitch).
-    *   **Joystick:** Supported for movement and rotation.
-    *   **R:** Reload shaders.
-
-## Key Files
-*   `src/main.cpp`: Main application loop, scene setup, and rendering logic.
-*   `src/core.cpp`: OpenGL initialization and helper functions.
-*   `shaders/`: GLSL shader files for different rendering passes.
+- Target: `Geometrie`; needs an OpenGL 4.5-capable driver (DSA entry points).
+- `g_render_sprites` at the top of `src/main.cpp` switches between the 3D tree geometry
+  and the imposter version.
