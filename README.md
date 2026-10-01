@@ -31,7 +31,7 @@ The assignments are organized into `AufgabenblattXX` directories, where `XX` rep
 -   **`Aufgabenblatt02/`**: Focus on image processing and manipulation.
 -   **`Aufgabenblatt03/`**: Introduction to ray generation and object intersection, forming the basis of ray tracing.
 -   **`Aufgabenblatt04/`**: Advanced Ray Tracing features including point lights and shadows.
--   **`Aufgabenblatt05/`**: Exercise sheet only (`Aufgabenblatt05.pdf` plus notes in its README); no code was submitted, so it has no CMake project.
+-   **`Aufgabenblatt05/`**: Written solutions to the 2D/3D transformation exercises (`Aufgabenblatt05.pdf`); no code was submitted for this sheet, so it has no CMake project.
 -   **`Aufgabenblatt06/`**: Advanced topics covering rasterization, scene graphs, lighting, and interactive rendering using OpenGL-related libraries.
 -   **`Aufgabenblatt07/`**: Image processing on CPU, featuring convolution filters (Gaussian, Laplacian) and boundary handling.
 -   **`Aufgabenblatt08/`**: Efficient rendering of large scenes using Instanced Rendering and Billboards (Imposters), utilizing Direct State Access (DSA).
@@ -102,18 +102,19 @@ Run the `ImageViewer` from `Aufgabenblatt06`:
 # Windows
 .\Aufgabenblatt06\00_student_setup\code\build\ImageViewer.exe
 ```
-Run `ImageViewer07` from `Aufgabenblatt07` either interactively (no arguments) or in console mode with a source and target image:
+Run `ImageViewer07` from `Aufgabenblatt07` either interactively (no arguments) or in console mode with a source and target image (the image I/O reads PBM/PGM/PPM only, there is no PNG/JPEG decoder):
 
 ```bash
 cd Aufgabenblatt07/00_student_setup/code
-./build/ImageViewer07 bilder/<input>.png out.png
+./build/ImageViewer07 bilder/<input>.ppm out.ppm
 ```
 
-The OpenGL viewers load their shaders via relative paths, so where you start them
-from matters: `Aufgabenblatt08` and `Aufgabenblatt09` hardcode `../shaders/...`,
-so they only work when started from their `code/build` directory, while
-`ImageViewer` (Blatt 06) and `ImageViewer07` (Blatt 07) try several path prefixes
-and also work from the sheet's `code` directory.
+The OpenGL viewers load their shaders and images via relative paths, so where you start
+them from matters: `Aufgabenblatt08` and `Aufgabenblatt09` hardcode `../shaders/...`,
+so they only work when started from their `code/build` directory. `ImageViewer`
+(Blatt 06) tries several path prefixes and also works from the sheet's `code`
+directory, while `ImageViewer07` (Blatt 07) only finds its default image when started
+from `code/build` and otherwise asks you to open one.
 
 **Verifying the Blatt 03 ray tracer against its reference images**
 
