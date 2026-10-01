@@ -144,8 +144,8 @@ namespace cg
 #else
         if (check_file("../../shader/display_texture_v.glsl") && check_file("../../shader/display_texture_f.glsl"))
         {
-            display_shader_vert_src = readShaderFile("../shader/display_texture_v.glsl");
-            display_shader_frag_src = readShaderFile("../shader/display_texture_f.glsl");
+            display_shader_vert_src = readShaderFile("../../shader/display_texture_v.glsl");
+            display_shader_frag_src = readShaderFile("../../shader/display_texture_f.glsl");
         }
         else if (check_file("../shader/display_texture_v.glsl") && check_file("../shader/display_texture_f.glsl"))
         {
