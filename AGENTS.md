@@ -96,6 +96,16 @@ The following issues were identified and fixed in this refactor of the ray-traci
 *   **CMake modernization:** both `CMakeLists.txt` files now use explicit source listings (no `file(GLOB)`), `if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")` / `if(MSVC)` (no `${VAR}` dereference), and `CXX_STANDARD 17` consistently. Blatt 03/04 targets renamed to `Raytracer03`/`Raytracer04` so both can coexist in a root build.
 *   **Docs:** a root `CMakeLists.txt` was added so the "configure all from root" instructions actually work.
 
+## Documentation and Hygiene Pass
+
+The later sheets and the per-sheet docs were cleaned up in the same spirit:
+
+*   **Blatt 06 shader path fix:** the viewer branch used by every non-Apple build without `DOWNGRADE_GL` checked `../../shader/display_texture_v.glsl` and then read `../shader/...`, so when it was started from a `build/Debug` or `build/Release` directory (multi-config generators) the check passed but the read returned an empty shader source. The reads now use the prefix that was checked. Blatt 07 was already consistent.
+*   **Sheet READMEs rewritten:** verified `-S`/`-B` directories, target names, working directories and stdin prompts; Blatt 09 gained the README it never had (including the `scene.glb` contract), Blatt 05 now describes its PDF as the written transformation solutions.
+*   **Blatt 07 `input/` removed:** byte-identical duplicate of `code/bilder/` that nothing referenced (~4.4 MB).
+*   **File names:** `AUFGABE 1.5.md` -> `aufgabe-1-5.md` and `Aufgabenblatt09/solution.txt` -> `solutions-shading.md` (the file was always markdown).
+*   **`.gitignore`:** also covers `build_ab*`, `cmake-build-*`, `compile_commands.json` and `result.ppm` (both raytracers write it into their working directory).
+
 ## Assignment Progress
 
 ### Aufgabenblatt 07: Image Filtering on CPU
