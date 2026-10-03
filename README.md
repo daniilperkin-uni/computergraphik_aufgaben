@@ -4,6 +4,33 @@
 
 This repository contains a collection of assignments for a "Computergraphik" (Computer Graphics) course. The assignments are structured to guide students through fundamental concepts and advanced techniques in computer graphics, utilizing C++ and CMake.
 
+**Live showcase:** [uni-old-projects](https://daniilperkin-uni.github.io/uni-old-projects/#computergrafik_aufgaben) — the Blatt 04 raytracer re-renders live in the browser (a 1:1 port of the code in this repository), alongside captures of every sheet.
+
+## Screenshots
+
+Captures from the built assignments — the complete set, including the console-mode filter outputs, is on the live showcase.
+
+**Blatt 02 — colour-space pipeline:** original vs colour-key effect
+![Blatt 02 — original](docs/screenshots/ginkgo-original.webp) ![Blatt 02 — colour-key effect](docs/screenshots/ginkgo-modified.webp)
+
+**Blatt 03 — first sphere intersections** (ctest-checked against the course reference):
+![Blatt 03 — sphere intersections](docs/screenshots/blatt03-spheres.png)
+
+**Blatt 04 — ray-traced scene** (Phong, shadows, mirror reflections):
+![Blatt 04 — ray-traced scene](docs/screenshots/blatt04-scene.png)
+
+**Blatt 06 — software rasterizer** (DNA double helix):
+![Blatt 06 — software rasterizer](docs/screenshots/blatt06-viewer.png)
+
+**Blatt 07 — image-filtering GUI** (Ginkgo photo):
+![Blatt 07 — image-filtering GUI](docs/screenshots/blatt07-viewer.webp)
+
+**Blatt 08 — instanced geometry vs billboard imposters:**
+![Blatt 08 — instanced geometry](docs/screenshots/blatt08-geometry.webp) ![Blatt 08 — billboard imposters](docs/screenshots/blatt08-imposters.webp)
+
+**Blatt 09 — glTF scene shading** (the exercise's own glTF scene):
+![Blatt 09 — glTF scene shading](docs/screenshots/blatt09-scene.webp)
+
 ## Course Overview
 
 The curriculum covers a range of topics, progressing from basic C++ programming to complex graphics implementations:
