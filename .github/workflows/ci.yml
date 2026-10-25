@@ -33,7 +33,7 @@ jobs:
           - { sheet: Aufgabenblatt09, source_dir: Aufgabenblatt09/code }
           - { sheet: root, source_dir: . }
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Cache fetched dependencies
         uses: actions/cache@v6
         with:
