@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Cache fetched dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ matrix.source_dir }}/build/_deps
           key: deps-${{ runner.os }}-${{ matrix.sheet }}-${{ hashFiles('**/libs.cmake', '**/CMakeLists.txt') }}
