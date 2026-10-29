@@ -141,7 +141,7 @@ int main()
         std::cout << "Multiplikation durchgeführt. Ergebnis-Matrix hat " << resultMatrix.getRowCount() << " Zeilen und " << resultMatrix.getColumnCount() << " Spalten." << std::endl;
 
         if (writeMatrix("matrix3.txt", resultMatrix)) {
-            std::cout << "Ergebnis wurde erfolgreich in 'matrix3.txt' geschrieben und befindet sich in ...cmake-build-debug" << std::endl;
+            std::cout << "Ergebnis wurde erfolgreich in 'matrix3.txt' im aktuellen Arbeitsverzeichnis geschrieben." << std::endl;
         } else {
             std::cerr << "FEHLER: Ergebnis konnte nicht in 'matrix3.txt' geschrieben werden!" << std::endl;
         }
