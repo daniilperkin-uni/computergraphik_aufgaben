@@ -66,3 +66,9 @@ target_include_directories(ImageIOTests07 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(ImageIOTests07 PRIVATE cxx_std_17)
 add_test(NAME ImageIOTests07 COMMAND ImageIOTests07)
 set_tests_properties(ImageIOTests07 PROPERTIES TIMEOUT 30)
+
+# Regression test for the compute dispatch group count (no GL context needed).
+add_executable(DispatchTests tests/test_dispatch.cpp)
+target_include_directories(DispatchTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_features(DispatchTests PRIVATE cxx_std_17)
+add_test(NAME DispatchTests COMMAND DispatchTests)

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "DispatchUtils.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -514,7 +515,8 @@ namespace cg
         std::array<int, 2> offset = { 1,0 };
         glUniform2iv(m_filter_prgm->getUniformLocation("pixel_offset"), 1, offset.data());
 
-        m_filter_prgm->dispatchCompute(m_original_image.get_width() / 4, m_original_image.get_height() / 4, 1);
+        m_filter_prgm->dispatchCompute(compute_group_count(m_original_image.get_width(), 4),
+                                       compute_group_count(m_original_image.get_height(), 4), 1);
 
         glMemoryBarrier(GL_COMPUTE_SHADER_BIT);
 
@@ -530,7 +532,8 @@ namespace cg
         offset = { 0,1 };
         glUniform2iv(m_filter_prgm->getUniformLocation("pixel_offset"), 1, offset.data());
 
-        m_filter_prgm->dispatchCompute(m_original_image.get_width() / 4, m_original_image.get_height() / 4, 1);
+        m_filter_prgm->dispatchCompute(compute_group_count(m_original_image.get_width(), 4),
+                                       compute_group_count(m_original_image.get_height(), 4), 1);
     }
 
     void ImageViewer::applyCPUEdgeDetection()
