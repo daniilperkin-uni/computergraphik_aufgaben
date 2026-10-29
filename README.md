@@ -143,6 +143,23 @@ so they only work when started from their `code/build` directory. `ImageViewer`
 directory, while `ImageViewer07` (Blatt 07) only finds its default image when started
 from `code/build` and otherwise asks you to open one.
 
+**Running the tests**
+
+Every sheet with automated checks registers them with CTest. After a root build, run
+all of them from the repository root:
+
+```bash
+ctest --test-dir build -C Release --output-on-failure
+```
+
+`-C Release` selects the configuration on multi-config generators such as Visual Studio;
+with Makefiles or Ninja it can be omitted. A single sheet works the same way from its own
+build directory, e.g. `ctest --test-dir Aufgabenblatt03/code/build -C Release`.
+
+Current checks: Blatt 01 (matrix file parsing), Blatt 02 and 07 (Netpbm image I/O, compute
+dispatch group count), Blatt 03 (ray tracer reference image) and Blatt 06 (rasterizer
+depth test).
+
 **Verifying the Blatt 03 ray tracer against its reference images**
 
 `Aufgabenblatt03` renders one image and compares it with
@@ -154,7 +171,7 @@ runs in CI:
 
 ```bash
 cd Aufgabenblatt03/code/build
-ctest --output-on-failure
+ctest -C Release --output-on-failure
 ```
 
 **Scene asset for `Aufgabenblatt09`**

@@ -46,7 +46,7 @@ jobs:
       - name: Build
         run: cmake --build ${{ matrix.source_dir }}/build --config Release --parallel
       - name: Run tests
-        # Only Aufgabenblatt03 registers a ctest test (render + reference comparison)
-        if: matrix.sheet == 'Aufgabenblatt03'
+        # Every sheet registers its CTest checks; --no-tests=ignore keeps the
+        # sheets without automated checks (05, 08, 09) green.
         working-directory: ${{ matrix.source_dir }}/build
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --no-tests=ignore

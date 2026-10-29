@@ -7,6 +7,13 @@
 #include <memory>
 #include <vector>
 
+// Directory that holds the reference images. CMake passes the absolute source
+// directory so the comparison works from any build tree; the fallback keeps a
+// manual build usable when the define is missing.
+#ifndef REFERENCE_DIR
+#define REFERENCE_DIR ".."
+#endif
+
 // TODO: Set the test according to your current exercise.
 const static bool TEST_RAY_GENERATION = false;
 const static bool TEST_SPHERE_INTERSECT = true;
@@ -152,12 +159,12 @@ void render(const Vec3i viewport, const std::vector<std::shared_ptr<SceneObject>
     if (TEST_RAY_GENERATION)
     {
         g_comparison_failed =
-            !comparePPM("../reference_rayGeneration.ppm", "ray generation test", framebuffer);
+            !comparePPM(std::string(REFERENCE_DIR) + "/reference_rayGeneration.ppm", "ray generation test", framebuffer);
     }
     else if (TEST_SPHERE_INTERSECT)
     {
         g_comparison_failed =
-            !comparePPM("../reference_sphereIntersection.ppm", "sphere intersection test", framebuffer);
+            !comparePPM(std::string(REFERENCE_DIR) + "/reference_sphereIntersection.ppm", "sphere intersection test", framebuffer);
     }
 }
 

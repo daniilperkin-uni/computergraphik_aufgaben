@@ -27,6 +27,10 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
+# Absolute path to the reference images: the comparison must work both in a
+# standalone build (code/build) and in the root build tree (build/Aufgabenblatt03/code).
+target_compile_definitions(${PROJECT_NAME} PRIVATE REFERENCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON

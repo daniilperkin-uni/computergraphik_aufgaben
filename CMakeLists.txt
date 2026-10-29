@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 project(computergraphik_aufgaben LANGUAGES CXX)
 
+# Register the tests of all sheets with CTest. Without this call in the root
+# directory no root-level CTestTestfile.cmake is generated and `ctest` in
+# build/ reports "No tests were found".
+enable_testing()
+
 # Root build: configure every assignment sheet that ships its own CMakeLists.txt
 # from a single place. Each sheet is added via add_subdirectory() and is guarded
 # by an EXISTS check so the root configuration still succeeds if a sheet (or its
