@@ -12,7 +12,8 @@ cmake --build Aufgabenblatt01/aufgaben_blatt_01/build --parallel
 ```
 
 Each exercise is its own executable below the build directory
-(`aufgabe_1/aufgabe_1`, `aufgabe_2/aufgabe_2`, ...), for example:
+(`aufgabe_1/aufgabe_1`, `aufgabe_2/aufgabe_2`, ...; multi-config generators add a
+`Release/` level), for example:
 
 ```bash
 ./Aufgabenblatt01/aufgaben_blatt_01/build/aufgabe_1/aufgabe_1
@@ -21,6 +22,18 @@ Each exercise is its own executable below the build directory
 - `aufgabe_1` asks for a circle radius on stdin.
 - `aufgabe_3` asks for the paths of two matrix files (samples in `code/`) and writes
   `matrix3.txt` into the working directory.
+
+## Tests
+
+```bash
+cd Aufgabenblatt01/aufgaben_blatt_01
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+`MatrixIOTests` loads a rectangular matrix and checks that ragged files are rejected
+instead of being read out of bounds.
 
 ## Notes
 

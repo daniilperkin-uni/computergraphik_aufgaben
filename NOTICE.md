@@ -6,8 +6,8 @@ property of the course; they are kept here as context for the submitted work.
 
 ## Vendored source code
 
-Checked into the repository. Paths are relative to the sheet's code directory
-(`AufgabenblattXX/00_student_setup/code` for sheets 01-08, `Aufgabenblatt09/code`):
+Checked into the repository. Paths are relative to each sheet's code directory (e.g.
+`Aufgabenblatt07/00_student_setup/code`, `Aufgabenblatt09/code`):
 
 | Library | Path | License |
 | --- | --- | --- |
@@ -23,8 +23,8 @@ where the projects embed them in their sources.
 ## Fetched at configure time
 
 CMake `FetchContent` downloads these during configure (pinned by hash or commit, not
-stored in the repository): GLFW 3.4 and GLM 1.0.1 (all OpenGL sheets), Dear ImGui 1.86
-(Aufgabenblatt06) and the tinygltf sources (Aufgabenblatt09).
+stored in the repository): GLFW 3.4 (all OpenGL sheets), GLM 1.0.1 (sheets 06, 08 and
+09), Dear ImGui 1.86 (Aufgabenblatt06) and the tinygltf sources (Aufgabenblatt09).
 
 ## Sample images
 

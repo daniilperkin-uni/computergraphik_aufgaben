@@ -24,6 +24,19 @@ configure, so that step needs network access.
 ## Notes
 
 - Target: `ImageViewer`; needs an OpenGL 4.4-capable driver (see the root README).
+- Needs **CMake >= 3.30**: `libs/libs.cmake` sets policy CMP0169 (the ImGui `FetchContent_Populate` step).
 - The written answers to task 1.5 (z-buffer and clipping) are in `aufgabe-1-5.md`.
 - `scene/` holds the scene graph, camera and lights; `image/` the image class and the
   viewer; `Rasterizer.cpp` the drawing code.
+
+## Tests
+
+```bash
+cd Aufgabenblatt06/00_student_setup/code
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+`RasterizerTests` renders the test triangle with `near = 1.0` and checks that it is not
+culled — the depth test compares NDC z, not the view-space near/far distances.

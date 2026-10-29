@@ -1,4 +1,4 @@
-AUFGABE 1.5
+# Aufgabenblatt 06 — Aufgabe 1.5: Z-Buffer und Clipping
 
 ## (a) Z-Buffer
 

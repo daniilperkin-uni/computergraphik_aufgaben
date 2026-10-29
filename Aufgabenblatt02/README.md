@@ -24,3 +24,16 @@ The program asks for the exercise number on stdin: 1 = grayscale, 2 = black/whit
 ## Notes
 
 - Target: `ColorSpaces`; no external dependencies.
+
+## Tests
+
+```bash
+cd Aufgabenblatt02/aufgaben_blatt_02_/code
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+`ImageIOTests` round-trips binary PBMs of several widths (including 1x1 and 9x1), checks
+the P4 bit order and polarity against a hand-written file, and verifies that a truncated
+header throws instead of hanging.

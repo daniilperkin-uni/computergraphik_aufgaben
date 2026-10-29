@@ -29,3 +29,16 @@ Gaussian, followed by the border-policy, kernel-extent and sigma prompts.
 - Target: `ImageViewer07`.
 - The GPU path is only initialized on an OpenGL 4.3+ context (compute shaders); the CPU
   filters work regardless.
+
+## Tests
+
+```bash
+cd Aufgabenblatt07/00_student_setup/code
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+`ImageIOTests07` covers the Netpbm I/O (PBM round-trips, bit order and polarity, EOF
+handling); `DispatchTests` pins the compute-shader group count so image borders are not
+skipped for sizes that are not a multiple of four.

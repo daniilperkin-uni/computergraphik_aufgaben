@@ -69,7 +69,7 @@ Each `AufgabenblattXX` folder contains a dedicated `README.md` with a more detai
 ## Prerequisites
 
 *   **C++ compiler** supporting **C++17** (e.g., g++ >= 8, clang++ >= 7, or MSVC 2019+).
-*   **CMake >= 3.16**.
+*   **CMake >= 3.16**; the root build and `Aufgabenblatt06` need **CMake >= 3.30** (its `libs/libs.cmake` sets policy CMP0169).
 *   **OpenGL 4.4+** (4.5+ recommended) for the real-time assignments (`Aufgabenblatt06`-`Aufgabenblatt09`). GLFW 3.4, GLM 1.0.1, Dear ImGui and tinygltf are downloaded automatically by CMake (FetchContent); GLAD and glowl are vendored. On Linux install the OpenGL/X11 headers: `sudo apt-get install libgl1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev`.
 *   The early ray-tracing assignments (`Aufgabenblatt03`, `Aufgabenblatt04`) have **no external dependencies** beyond a C++17 compiler and CMake.
 
@@ -108,7 +108,7 @@ cmake --build Aufgabenblatt06/00_student_setup/code/build --parallel
 
 **Running Executables**
 
-After a successful build, the executable files will be located in the build directory (often within a `Debug` or `Release` subfolder, depending on the generator).
+After a successful build, the executable files will be located in the build directory (often within a `Debug` or `Release` subfolder, depending on the generator; multi-config generators such as Visual Studio use `Release/`, the examples below assume a single-config build).
 
 Run the Blatt 03 ray tracer:
 
@@ -209,6 +209,11 @@ cd Aufgabenblatt09/code/build
 *   **Memory Management:** `std::shared_ptr` is commonly employed for robust object management within scene graphs and object hierarchies, promoting safer memory handling.
 *   **Code Structure:** Code is logically organized into modules. The image/rasterizer code of sheets 02, 06 and 07 lives in `namespace cg`; the ray tracers (03/04) and sheets 08/09 use the global namespace.
 *   **Documentation:** Code includes comments (some in German) explaining complex logic and `TODO` markers indicating areas for student implementation.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Vendored third-party code, sample assets and the course
+material are listed in [NOTICE.md](NOTICE.md).
 
 ---
 *Built with an AI coding agent working directly in this repository — scope, review and maintenance by Daniil Perkin.*
