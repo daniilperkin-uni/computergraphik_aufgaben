@@ -428,10 +428,12 @@ void cg::Rasterizer::setPixel(const Point3D& point, Color color)
     {
         // Only draw if:
         //  - (x, y) coordinates are within the image
-        //  - z is within the camera's range [near, far]
+        //  - z is inside the normalized device coordinate range [-1, 1]
+        //    (point.z is NDC depth, not a view-space distance, so it must not
+        //    be compared against camera.getNear()/getFar())
         //  - z is smaller than or equal to the one stored in the z-buffer
         if (x >= 0 && x < static_cast<int>(this->image.get_width()) && y >= 0 && y < static_cast<int>(this->image.get_height())
-            && z > this->camera.getNear() && z < this->camera.getFar() && this->zBuffer.at(x, y)[0] >= z)
+            && z >= -1.0f && z <= 1.0f && this->zBuffer.at(x, y)[0] >= z)
         {
             // If z-buffer equals z-value, only draw pixel if it is lighter than the current one
             if (this->zBuffer.at(x, y)[0] == z)

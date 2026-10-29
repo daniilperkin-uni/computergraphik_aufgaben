@@ -87,6 +87,25 @@ if (${DOWNGRADE_GL})
   target_compile_definitions(${PROJECT_NAME} PRIVATE DOWNGRADE_GL)
 endif()
 
+# Regression test (CTest): the depth test must compare NDC z, not the view-space
+# near/far distances.
+enable_testing()
+add_executable(RasterizerTests
+  tests/test_rasterizer.cpp
+  Math1.cpp
+  Rasterizer.cpp
+  ${scene_source_files}
+  image/ImageBase.cpp)
+target_compile_features(RasterizerTests PRIVATE cxx_std_17)
+set_target_properties(RasterizerTests PROPERTIES CXX_EXTENSIONS OFF)
+target_include_directories(RasterizerTests PRIVATE .)
+target_link_libraries(RasterizerTests PRIVATE glm)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(RasterizerTests PRIVATE OpenMP::OpenMP_CXX)
+endif()
+add_test(NAME RasterizerTests COMMAND RasterizerTests)
+set_tests_properties(RasterizerTests PROPERTIES TIMEOUT 60)
+
 # VS
 source_group("Header Files" FILES ${header_files})
 source_group("Source Files" FILES ${source_files})
