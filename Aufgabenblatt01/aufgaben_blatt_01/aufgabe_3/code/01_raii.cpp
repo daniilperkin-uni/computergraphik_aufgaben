@@ -41,7 +41,20 @@ bool loadMatrix(std::string const& filename, MatrixInt& matrix)
         std::vector<std::string> tokens;
         tokenize(line, tokens);
 
-        columnCount = static_cast<unsigned int>(tokens.size());
+        if (tokens.empty())
+            break;
+
+        // Every row must have the same number of columns; otherwise the copy
+        // loop below would index past the end of a shorter row.
+        if (lines.empty())
+        {
+            columnCount = static_cast<unsigned int>(tokens.size());
+        }
+        else if (tokens.size() != columnCount)
+        {
+            return false;
+        }
+
         rowCount++;
 
         lines.push_back(tokens);
@@ -90,6 +103,7 @@ bool writeMatrix(std::string const& filename, MatrixInt const& matrix)
 
     return true;
 }
+#ifndef MATRIX_IO_TEST
 int main()
 {
     std::string matrix1path;
@@ -139,3 +153,4 @@ int main()
 
     return 0;
 }
+#endif // !MATRIX_IO_TEST

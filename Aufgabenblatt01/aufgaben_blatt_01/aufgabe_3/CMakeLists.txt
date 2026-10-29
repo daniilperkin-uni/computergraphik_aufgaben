@@ -11,3 +11,12 @@ add_executable(aufgabe_3
 )
 
 target_include_directories(aufgabe_3 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/code)
+
+# Regression test (CTest): a ragged matrix file must be rejected instead of
+# indexing past the end of a short row.
+enable_testing()
+add_executable(MatrixIOTests tests/test_matrix_io.cpp code/01_raii.cpp code/MatrixInt.cpp)
+target_compile_definitions(MatrixIOTests PRIVATE MATRIX_IO_TEST)
+target_include_directories(MatrixIOTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/code)
+add_test(NAME MatrixIOTests COMMAND MatrixIOTests)
+set_tests_properties(MatrixIOTests PROPERTIES TIMEOUT 30)
