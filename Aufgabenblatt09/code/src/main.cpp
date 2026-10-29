@@ -2,6 +2,7 @@
 
 #include <array>
 #include <chrono>
+#include <cstdint>
 #include <iostream>
 #include <random>
 #include <stdexcept>
@@ -339,7 +340,7 @@ MeshComponent CreateMesh(std::vector<VertexBufferDescriptor> const& vertices, In
                 desc.type,          // Datentyp (z.B. GL_FLOAT)
                 desc.normalized,    // Ob normalisiert werden soll
                 desc.stride,        // Stride (Byte-Abstand zwischen Elementen)
-                (void*)desc.offset  // Offset im Buffer (hier meist 0)
+                reinterpret_cast<void*>(static_cast<std::uintptr_t>(desc.offset))  // Offset im Buffer (hier meist 0)
             );
         }
     }
@@ -833,9 +834,10 @@ void RenderFrame() {
         glDrawElements(GL_TRIANGLES, g_scene.mesh_data[obj.second].index_count, g_scene.mesh_data[obj.second].index_type, nullptr);
     }
 
-    // unbind buffers
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    // unbind buffers (the element buffer binding is part of the VAO state, so
+    // the VAO has to be unbound first)
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 /// Updates the resolution. This is called by GLFW when the resolution changes.
