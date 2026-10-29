@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 namespace
@@ -40,6 +41,21 @@ namespace
         while (state != FINISHED)
         {
             stream.read(&next_char, 1);
+
+            // A stream that cannot deliver another character is at EOF (or
+            // broken). Accept a token that is already complete - a Netpbm file
+            // may end right after its last value - and fail on anything else
+            // instead of spinning on a stale character.
+            if (!stream)
+            {
+                if (state == READING && !buffer.empty())
+                {
+                    state = FINISHED;
+                    break;
+                }
+
+                throw std::runtime_error("Unexpected end of file while reading a Netpbm value");
+            }
 
             switch (state)
             {
@@ -131,7 +147,10 @@ namespace
         file_header.width = read_value(stream);
         file_header.height = read_value(stream);
 
-        if (file_header.file_type == header::file_t::PGM || file_header.file_type == header::file_t::PPM)
+        // PGM and PPM carry a maximum value in the header - in the plain
+        // variants as well, otherwise the loader divides by garbage.
+        if (file_header.file_type == header::file_t::PGM || file_header.file_type == header::file_t::PPM ||
+            file_header.file_type == header::file_t::PLAIN_PGM || file_header.file_type == header::file_t::PLAIN_PPM)
         {
             file_header.max_value = read_value(stream);
         }
@@ -192,7 +211,7 @@ namespace
         {
             for (unsigned int i = 0; i < header.width; ++i)
             {
-                image(i, j)[0] = (read_value(stream) != 0) ? 1.0f : 0.0f;
+                image(i, j)[0] = (read_value(stream) != 0) ? 0.0f : 1.0f;
             }
         }
 
@@ -239,31 +258,31 @@ namespace
 
     cg::image<cg::color_space_t::BW> load_pbm(std::ifstream& stream, const header& header)
     {
-        // Read image
-        std::vector<char> buffer((header.width + header.width % 8) * header.height / 8);
-        const auto* cbuffer = reinterpret_cast<unsigned char*>(buffer.data());
+        // Each row is padded to a whole byte; the most significant bit of
+        // the first byte belongs to the left-most pixel of the row.
+        const std::size_t row_bytes = (static_cast<std::size_t>(header.width) + 7u) / 8u;
 
-        stream.read(buffer.data(), buffer.size());
+        // Read image
+        std::vector<char> buffer(row_bytes * header.height);
+
+        stream.read(buffer.data(), static_cast<std::streamsize>(buffer.size()));
+
+        if (static_cast<std::size_t>(stream.gcount()) != buffer.size())
+        {
+            throw std::runtime_error("Unexpected end of file while reading PBM pixel data");
+        }
 
         // Create image
         cg::image<cg::color_space_t::BW> image(header.width, header.height);
 
-        std::size_t index = buffer.size() - 1;
-
-        for (int j = header.height - 1; j >= 0; --j)
+        for (unsigned int j = 0; j < header.height; ++j)
         {
-            for (int i = (header.width + header.width % 8) - 1; i >= 0; i -= 8)
+            for (unsigned int i = 0; i < header.width; ++i)
             {
-                image((i - 0) % header.width, j)[0] = ((cbuffer[index] & 1) != 0) ? 1.0f : 0.0f;
-                image((i - 1) % header.width, j)[0] = ((cbuffer[index] & 2) != 0) ? 1.0f : 0.0f;
-                image((i - 2) % header.width, j)[0] = ((cbuffer[index] & 4) != 0) ? 1.0f : 0.0f;
-                image((i - 3) % header.width, j)[0] = ((cbuffer[index] & 8) != 0) ? 1.0f : 0.0f;
-                image((i - 4) % header.width, j)[0] = ((cbuffer[index] & 16) != 0) ? 1.0f : 0.0f;
-                image((i - 5) % header.width, j)[0] = ((cbuffer[index] & 32) != 0) ? 1.0f : 0.0f;
-                image((i - 6) % header.width, j)[0] = ((cbuffer[index] & 64) != 0) ? 1.0f : 0.0f;
-                image((i - 7) % header.width, j)[0] = ((cbuffer[index] & 128) != 0) ? 1.0f : 0.0f;
+                const auto byte = static_cast<unsigned char>(buffer[j * row_bytes + i / 8]);
+                const bool black = ((byte >> (7 - i % 8)) & 1u) != 0;
 
-                --index;
+                image(i, j)[0] = black ? 0.0f : 1.0f;
             }
         }
 
@@ -382,10 +401,10 @@ namespace
         {
             for (unsigned int i = 0; i < image.get_width() - 1; ++i)
             {
-                stream << ((image(i, j)[0] != 0.0f) ? 1 : 0) << " ";
+                stream << ((image(i, j)[0] == 0.0f) ? 1 : 0) << " ";
             }
 
-            stream << ((image(image.get_width() - 1, j)[0] != 0.0f) ? 1 : 0) << std::endl;
+            stream << ((image(image.get_width() - 1, j)[0] == 0.0f) ? 1 : 0) << std::endl;
         }
     }
 
@@ -438,33 +457,26 @@ namespace
 
     void save_pbm(std::ofstream& stream, const cg::image<cg::color_space_t::BW>& image)
     {
-        // Create buffer
-        std::vector<char> buffer((image.get_width() + image.get_width() % 8) * image.get_height() / 8);
-        auto* cbuffer = reinterpret_cast<unsigned char*>(buffer.data());
+        // Each row is padded to a whole byte; a set bit encodes a black pixel.
+        const std::size_t row_bytes = (static_cast<std::size_t>(image.get_width()) + 7u) / 8u;
 
-        std::size_t index = 0;
+        // Create buffer
+        std::vector<char> buffer(row_bytes * image.get_height(), 0);
+        auto* cbuffer = reinterpret_cast<unsigned char*>(buffer.data());
 
         for (unsigned int j = 0; j < image.get_height(); ++j)
         {
-            for (unsigned int i = 0; i < image.get_width(); i += 8)
+            for (unsigned int i = 0; i < image.get_width(); ++i)
             {
-                cbuffer[index] = static_cast<unsigned char>(0);
-
-                cbuffer[index] |= (image((i + 0) % image.get_width(), j)[0] != 0.0f) ? 128 : 0;
-                cbuffer[index] |= (image((i + 1) % image.get_width(), j)[0] != 0.0f) ? 64 : 0;
-                cbuffer[index] |= (image((i + 2) % image.get_width(), j)[0] != 0.0f) ? 32 : 0;
-                cbuffer[index] |= (image((i + 3) % image.get_width(), j)[0] != 0.0f) ? 16 : 0;
-                cbuffer[index] |= (image((i + 4) % image.get_width(), j)[0] != 0.0f) ? 8 : 0;
-                cbuffer[index] |= (image((i + 5) % image.get_width(), j)[0] != 0.0f) ? 4 : 0;
-                cbuffer[index] |= (image((i + 6) % image.get_width(), j)[0] != 0.0f) ? 2 : 0;
-                cbuffer[index] |= (image((i + 7) % image.get_width(), j)[0] != 0.0f) ? 1 : 0;
-
-                ++index;
+                if (image(i, j)[0] == 0.0f)
+                {
+                    cbuffer[j * row_bytes + i / 8] |= static_cast<unsigned char>(1u << (7 - i % 8));
+                }
             }
         }
 
         // Save to file
-        stream.write(buffer.data(), buffer.size());
+        stream.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
     }
 
     void save_pgm(std::ofstream& stream, const cg::image<cg::color_space_t::Gray>& image, const unsigned int max_value)

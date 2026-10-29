@@ -58,3 +58,11 @@ source_group("Header Files" FILES ${header_files})
 source_group("Source Files" FILES ${source_files})
 source_group("glowl" FILES ${glowl_files})
 source_group("imgui" FILES ${imgui_files})
+
+# Regression tests (CTest): Netpbm round-trips and malformed-input handling.
+enable_testing()
+add_executable(ImageIOTests07 tests/test_image_io.cpp ImageIO.cpp ImageBase.cpp)
+target_include_directories(ImageIOTests07 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_features(ImageIOTests07 PRIVATE cxx_std_17)
+add_test(NAME ImageIOTests07 COMMAND ImageIOTests07)
+set_tests_properties(ImageIOTests07 PROPERTIES TIMEOUT 30)
