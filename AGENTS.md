@@ -37,7 +37,7 @@ The project uses CMake for its build system. Each `Aufgabenblatt` (assignment sh
 
 **Running Executables:**
 
-After a successful build, executables will typically be found in the respective build directories (e.g., `build/Debug` or `cmake-build-debug`). The exact path and executable name will vary per assignment.
+After a successful build, executables will typically be found in the respective build directories (e.g. `build/Release` for multi-config generators such as Visual Studio, `build/` for Makefiles/Ninja). The exact path and executable name will vary per assignment.
 
 For example, to run the `ImageViewer` from `Aufgabenblatt06`:
 ```bash
@@ -83,6 +83,15 @@ cmake --build build
 
 Target names: `Raytracer03` (Blatt 03), `Raytracer04` (Blatt 04), `ColorSpaces` (Blatt 02), `aufgabe_1`..`aufgabe_4` (Blatt 01), `ImageViewer` (Blatt 06), `ImageViewer07` (Blatt 07), `Geometrie` (Blatt 08), `SceneShading` (Blatt 09).
 
+**Tests:**
+Every sheet with automated checks registers them with CTest; `enable_testing()` in the root `CMakeLists.txt` aggregates them. From the repository root:
+
+```bash
+ctest --test-dir build -C Release --output-on-failure
+```
+
+Targets: `MatrixIOTests` (01), `ImageIOTests` (02), `ComparePPMTests` + `Vec3Tests` + `Raytracer03_reference` (03), `RasterizerTests` (06), `ImageIOTests07` + `DispatchTests` (07). Sheets 04, 08 and 09 have no automated checks. CI runs ctest in every matrix entry (`--no-tests=ignore` keeps the sheets without checks green). The root build and `Aufgabenblatt06` need CMake >= 3.30 (`libs/libs.cmake` sets policy CMP0169).
+
 ## Known Issues
 
 The following issues were identified and fixed in this refactor of the ray-tracing assignments (`Aufgabenblatt03`, `Aufgabenblatt04`):
@@ -127,4 +136,16 @@ The later sheets and the per-sheet docs were cleaned up in the same spirit:
 *   **Vertex Data:** Mapped non-interleaved geometry data (Positions, Normals, UVs, Tangents) to specific shader locations using Vertex Buffers.
 *   **Phong Lighting:** Implemented a multi-light source Phong reflection model calculating diffuse, specular, and distance attenuation components.
 *   **Normal Mapping:** Transformed normals using Tangent-Space (TBN) matrices to add fine geometric details from textures.
+
+## QA pass (2026-10-29)
+
+A verification pass over the whole repository fixed these defects (each behavioural fix has a CTest regression test unless noted):
+
+*   **Netpbm I/O (Blatt 02/07):** binary PBM was sized `(w + w % 8) * h / 8` (0 bytes for 1x1, under-allocated for non-multiples of 8), rows were decoded bottom-up and padding bits treated as pixels, short reads were ignored; `read_value()` spun forever at EOF; plain PGM/PPM never read `max_value`; Blatt 07 wrote and read PBM with inverted polarity.
+*   **Rasterizer (Blatt 06):** `setPixel()` compared the NDC depth with the view-space near/far distances, so raising the near plane culled visible geometry.
+*   **Matrix loader (Blatt 01):** ragged input indexed past the end of shorter rows.
+*   **Blatt 07 GPU filter:** the dispatch group count truncated instead of rounding up, leaving the right/bottom border unprocessed.
+*   **Blatt 09:** specular highlights on backfaces; VAO unbound after `GL_ELEMENT_ARRAY_BUFFER`; C4312 on the attribute offset cast.
+*   **Blatt 03:** mismatch percentage truncated to `0%`; `Vec3<int>::normalize()` silently zeroed the vector (now a compile error).
+*   **Build/CI:** root `enable_testing()` was missing (root ctest found no tests); CI now runs ctest in every matrix entry; the Blatt 03 reference path comes from a `REFERENCE_DIR` compile definition instead of the working directory.
 
