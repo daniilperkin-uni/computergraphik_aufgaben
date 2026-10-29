@@ -21,12 +21,17 @@ layout(location = 4) in vec2 uv;
 layout(location = 0) out vec4 out_color;
 
 vec3 phongLighting(vec3 normal, vec3 light_direction, vec3 view_direction, vec3 k_d, vec3 k_s, float shininess) {
-    // diffuse term
-    vec3 color = k_d * max(dot(normal, light_direction), 0.0);
+    float n_dot_l = dot(normal, light_direction);
 
-    // specular term
-    vec3 reflect_dir = reflect(-light_direction, normal);
-    color += pow(clamp(dot(reflect_dir, view_direction), 0.0, 1.0), shininess) * k_s;
+    // diffuse term
+    vec3 color = k_d * max(n_dot_l, 0.0);
+
+    // specular term - only for surfaces that face the light, otherwise the
+    // highlight bleeds through backfaces
+    if (n_dot_l > 0.0) {
+        vec3 reflect_dir = reflect(-light_direction, normal);
+        color += pow(clamp(dot(reflect_dir, view_direction), 0.0, 1.0), shininess) * k_s;
+    }
 
     return color;
 }
