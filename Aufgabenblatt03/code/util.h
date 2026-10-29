@@ -3,6 +3,7 @@
 #include "vec3.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <string>
@@ -89,7 +90,8 @@ static bool comparePPM(const std::string referenceFileName, const std::string te
 
         if (!match)
         {
-            std::cout << cnt*100/framebuffer.size()
+            std::cout << std::fixed << std::setprecision(2)
+                      << static_cast<double>(cnt) * 100.0 / static_cast<double>(framebuffer.size())
                       << "% of the pixel values did not match the reference image in the "
                       << testName << "." << std::endl;
         }

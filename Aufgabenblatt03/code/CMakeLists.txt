@@ -39,9 +39,17 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Automated verification: the raytracer renders one image and compares it with
 # the matching reference PPM in this directory (see comparePPM in util.h). It
 # exits non-zero on a mismatch, so the check can run in CI via ctest.
-# The working directory is the build directory, which is what the relative
-# reference paths in main.cpp expect.
+# The reference directory is passed as REFERENCE_DIR, so the check works in a
+# standalone build tree as well as in the root build tree.
 enable_testing()
+
+# Regression test for the comparePPM() mismatch diagnostic (header-only, no render).
+add_executable(ComparePPMTests tests/test_compare_ppm.cpp)
+target_compile_features(ComparePPMTests PRIVATE cxx_std_17)
+target_include_directories(ComparePPMTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME ComparePPMTests COMMAND ComparePPMTests)
+set_tests_properties(ComparePPMTests PROPERTIES TIMEOUT 30)
+
 add_test(NAME ${PROJECT_NAME}_reference
          COMMAND ${PROJECT_NAME}
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
