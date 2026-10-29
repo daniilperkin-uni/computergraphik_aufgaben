@@ -86,6 +86,21 @@ namespace
         std::remove(path.c_str());
     }
 
+    void test_plain_pbm_polarity()
+    {
+        // P1, 2x1: "1" is black, "0" is white.
+        const std::string path = "plain_pbm_spec.pbm";
+        write_file(path, "P1\n2 1\n1 0\n");
+
+        const auto loaded = cg::image_io::load_bw_image(path);
+
+        check(loaded.get_width() == 2 && loaded.get_height() == 1, "plain PBM size");
+        check(loaded(0, 0)[0] == 0.0f, "plain PBM black pixel");
+        check(loaded(1, 0)[0] == 1.0f, "plain PBM white pixel");
+
+        std::remove(path.c_str());
+    }
+
     void test_truncated_header_throws()
     {
         const std::string path = "truncated.pgm";
@@ -130,6 +145,7 @@ int main()
         test_round_trip(9, 1);
         test_round_trip(17, 3);
         test_pbm_bit_order_and_polarity();
+        test_plain_pbm_polarity();
         test_truncated_header_throws();
         test_plain_pgm_without_trailing_whitespace();
     }
