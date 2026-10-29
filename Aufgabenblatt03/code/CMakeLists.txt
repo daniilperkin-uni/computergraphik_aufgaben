@@ -50,6 +50,12 @@ target_include_directories(ComparePPMTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 add_test(NAME ComparePPMTests COMMAND ComparePPMTests)
 set_tests_properties(ComparePPMTests PROPERTIES TIMEOUT 30)
 
+# Regression test for Vec3::normalize() (header-only).
+add_executable(Vec3Tests tests/test_vec3.cpp)
+target_compile_features(Vec3Tests PRIVATE cxx_std_17)
+target_include_directories(Vec3Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME Vec3Tests COMMAND Vec3Tests)
+
 add_test(NAME ${PROJECT_NAME}_reference
          COMMAND ${PROJECT_NAME}
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

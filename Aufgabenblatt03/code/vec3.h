@@ -5,6 +5,7 @@
 #include <iostream>     // ostream
 #include <limits>       // numeric_limits
 #include <stdexcept>    // invalid_argument
+#include <type_traits>  // is_floating_point
 
 /**
  * Class representing a 3D vector in euclidian space.
@@ -190,6 +191,10 @@ public:
     // normalize this vec3
     inline const Vec3& normalize()
     {
+        // For Vec3<int> the expression below is integer division: 1 / length()
+        // is 0 for every length >= 2 and silently zeroes the vector.
+        static_assert(std::is_floating_point<T>::value, "Vec3::normalize requires a floating-point type");
+
         if (!*this == false)
             *this *= 1 / length();
         return *this;
